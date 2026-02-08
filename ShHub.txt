@@ -23,8 +23,7 @@ local farm = window:AddTab("Farm")
 farm:AddLabel("Fast Farm")
 
 local selectedOrb = ""
-local OrbList = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"}
 
-farm:AddDropdown("Select Orb", OrbList, function(text)
+farm:AddDropdown("Select Orb", {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"}, function(text)
     selectedOrb = text
 end)
