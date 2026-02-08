@@ -21,12 +21,15 @@ local window = library:AddWindow("Syniox Hub | Legends Of Speed || HELLO - ".. d
 
 local farm = window:AddTab("Farm")
 local:Addlabel("Fast Farm")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local OrbFarm = farm:AddDropdown("🔮 Select Orb", function(text) 
     selectedOrb = text 
 end)
 
-local OrbList = { "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", }
+local OrbList = {
+   "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb",
+}
 
 for _, name in ipairs(OrbList) do 
     OrbFarm:Add(name) 
