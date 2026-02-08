@@ -19,18 +19,12 @@ local window = library:AddWindow("Syniox Hub | Legends Of Speed || HELLO - ".. d
     can_resize = true 
 })
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local farm = window:AddTab("Farm")
-
 farm:AddLabel("Fast Farm")
 
 local selectedOrb = ""
+local OrbList = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"}
 
-local OrbFarm = farm:AddDropdown({
-    Name = "🔮 Select Orb",
-    Default = "None",
-    Options = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"},
-    Callback = function(Value)
-        selectedOrb = Value
-    end    
-})
+farm:AddDropdown("Select Orb", OrbList, function(text)
+    selectedOrb = text
+end)
