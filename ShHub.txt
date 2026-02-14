@@ -25,9 +25,17 @@ farm:AddLabel("Fast Farm")
 local selectedOrb = ""
 local farming = false
 
-farm:AddDropdown("Select Orb", {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"}, function(text)
+local orbDropdown = farm:AddDropdown("Select Orb", function(text)
     selectedOrb = text
 end)
+
+local orbList = {
+    "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"
+}
+
+for _, name in ipairs(orbList) do 
+    orbDropdown:Add(name) 
+end
 
 farm:AddSwitch("Auto Farm Orbs", function(state)
     farming = state
