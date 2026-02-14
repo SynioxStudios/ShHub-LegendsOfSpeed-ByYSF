@@ -23,7 +23,34 @@ local farm = window:AddTab("Farm")
 farm:AddLabel("Fast Farm")
 
 local selectedOrb = ""
+local farming = false
 
 farm:AddDropdown("Select Orb", {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"}, function(text)
     selectedOrb = text
+end)
+
+farm:AddSwitch("Auto Farm Orbs", function(state)
+    farming = state
+    if farming then
+        task.spawn(function()
+            while farming do
+                if selectedOrb ~= "" then
+                    game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
+                end
+                task.wait(0.01)
+            end
+        end)
+    end
+end)
+
+farm:AddSwitch("Auto Hoops", function(state)
+    local hooping = state
+    if hooping then
+        task.spawn(function()
+            while hooping do
+                game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+                task.wait(0.01)
+            end
+        end)
+    end
 end)
