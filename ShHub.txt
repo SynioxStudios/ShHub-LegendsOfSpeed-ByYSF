@@ -45,7 +45,7 @@ farm:AddSwitch("Auto Farm Orbs", function(state)
                 if selectedOrb ~= "" then
                     game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
                 end
-                task.wait(0.01)
+                task.wait(0.001)
             end
         end)
     end
@@ -56,7 +56,13 @@ farm:AddSwitch("Auto Hoops", function(state)
     if hooping then
         task.spawn(function()
             while hooping do
-                game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+                for _, v in pairs(game:GetService("Workspace").Hoops:GetChildren()) do
+                    if hooping and v:FindFirstChild("Apperance") then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Apperance.CFrame
+                        game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+                        task.wait(0.05)
+                    end
+                end
                 task.wait(0.01)
             end
         end)
