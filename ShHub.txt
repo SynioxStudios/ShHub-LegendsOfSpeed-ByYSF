@@ -51,25 +51,31 @@ farm:AddSwitch("Auto Farm Orbs", function(state)
     end
 end)
 
-farm:AddSwitch("⬆️ Auto Hoops", function(state)
-    local bringing = state
-    if bringing then
-        task.spawn(function()
-            while bringing do
-                local char = game.Players.LocalPlayer.Character
-                local root = char and char:FindFirstChild("HumanoidRootPart")
-                if root then
-                    for _, v in pairs(game:GetService("Workspace").Hoops:GetChildren()) do
-                        if not bringing then break end
-                        if v:FindFirstChild("Apperance") then
-                            v.Apperance.CFrame = root.CFrame
-                            game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
-                        end
-                        task.wait(0.01)
+local hoopConnection
+
+farm:AddSwitch("⬆️ Auto Hoop", function(state)
+    local hooping = state
+    
+    if hooping then
+        hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
+            local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local hoops = game.Workspace:FindFirstChild("Hoops")
+            
+            if root and hoops then
+                for _, hoop in ipairs(hoops:GetChildren()) do
+                    -- Halkanın ismi 'Hoop' ise veya içinde 'Apperance' varsa senin üzerine çeker
+                    if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
+                        hoop.CFrame = root.CFrame
+                        -- Hydroxide'dan bildiğimiz event'i tetikliyoruz
+                        game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
                     end
                 end
-                task.wait(0.1)
             end
         end)
+    else
+        if hoopConnection then
+            hoopConnection:Disconnect()
+            hoopConnection = nil
+        end
     end
 end)
