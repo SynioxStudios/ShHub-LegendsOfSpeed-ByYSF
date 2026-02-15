@@ -51,31 +51,24 @@ farm:AddSwitch("Auto Farm Orbs", function(state)
     end
 end)
 
-farm:AddSwitch("Auto Hoops", function(state)
-    local hooping = state
-    
-    local hoopCoords = {
-        Vector3.new(-86.84, 114.95, -111.44),
-        Vector3.new(230.86, 91.99, 79.77),
-        Vector3.new(-534.23, 57.67, 208.96),
-        Vector3.new(-541.89, 59.97, -129.51)
-    }
-
-    if hooping then
+farm:AddSwitch("⬆️ Auto Hoops", function(state)
+    local bringing = state
+    if bringing then
         task.spawn(function()
-            while hooping do
-                for _, pos in ipairs(hoopCoords) do
-                    if not hooping then break end
-                    
-                    -- Karakteri gerçekten hareket ettirmeden 
-                    -- Sadece sunucuya giden paketi o koordinattanmış gibi yolluyoruz
-                    pcall(function()
-                        game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop", pos)
-                    end)
-                    
-                    task.wait(0.05)
+            while bringing do
+                local char = game.Players.LocalPlayer.Character
+                local root = char and char:FindFirstChild("HumanoidRootPart")
+                if root then
+                    for _, v in pairs(game:GetService("Workspace").Hoops:GetChildren()) do
+                        if not bringing then break end
+                        if v:FindFirstChild("Apperance") then
+                            v.Apperance.CFrame = root.CFrame
+                            game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+                        end
+                        task.wait(0.01)
+                    end
                 end
-                task.wait()
+                task.wait(0.1)
             end
         end)
     end
