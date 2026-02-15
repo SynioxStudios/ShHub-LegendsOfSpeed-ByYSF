@@ -52,30 +52,36 @@ farm:AddSwitch("Auto Farm Orbs", function(state)
 end)
 
 local hoopConnection
+local motionConnection
 
 farm:AddSwitch("⬆️ Auto Hoop", function(state)
     local hooping = state
     
     if hooping then
+        motionConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local char = game.Players.LocalPlayer.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum:ChangeState(Enum.HumanoidStateType.Running)
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+
         hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
             local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
             local hoops = game.Workspace:FindFirstChild("Hoops")
             
             if root and hoops then
                 for _, hoop in ipairs(hoops:GetChildren()) do
-                    -- Halkanın ismi 'Hoop' ise veya içinde 'Apperance' varsa senin üzerine çeker
                     if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
                         hoop.CFrame = root.CFrame
-                        -- Hydroxide'dan bildiğimiz event'i tetikliyoruz
                         game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
                     end
                 end
             end
         end)
     else
-        if hoopConnection then
-            hoopConnection:Disconnect()
-            hoopConnection = nil
-        end
+        if hoopConnection then hoopConnection:Disconnect() hoopConnection = nil end
+        if motionConnection then motionConnection:Disconnect() motionConnection = nil end
     end
 end)
