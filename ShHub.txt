@@ -116,30 +116,30 @@ task.spawn(function()
 end)
 
 local rebirths = window:AddTab("Rebirth")
+local targetRebirthValue = 0 
+local infiniteSwitch
+local targetSwitch
 
 rebirths:AddTextBox("🔢 Rebirth Target", function(text)
     local newValue = tonumber(text)
     if newValue and newValue > 0 then
         targetRebirthValue = newValue
-        updateStats() 
         
         game:GetService("StarterGui"):SetCore("SendNotification", {
             Title = "Updated Goal",
             Text = "New goal: " .. tostring(targetRebirthValue) .. " rebirths",
-            Duration = 0
+            Duration = 3
         })
     else
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Size",
+            Title = "Error",
             Text = "Put a size larger than 0",
-            Duration = 0
+            Duration = 3
         })
     end
 end)
 
-local infiniteSwitch
-
-local targetSwitch = rebirths:AddSwitch("🔄 Auto Rebirth Target", function(bool)
+targetSwitch = rebirths:AddSwitch("🔄 Auto Rebirth Target", function(bool)
     _G.targetRebirthActive = bool
     
     if bool then
@@ -149,27 +149,27 @@ local targetSwitch = rebirths:AddSwitch("🔄 Auto Rebirth Target", function(boo
         end
         
         spawn(function()
-            while _G.targetRebirthActive and wait(0.1) do
-                local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
+            while _G.targetRebirthActive and wait(0.5) do
+                local stats = game.Players.LocalPlayer:FindFirstChild("leaderstats")
+                local currentRebirths = stats and stats:FindFirstChild("Rebirths") and stats.Rebirths.Value or 0
                 
                 if currentRebirths >= targetRebirthValue then
-                    targetSwitch:Set(false)
                     _G.targetRebirthActive = false
+                    targetSwitch:Set(false)
                     
                     game:GetService("StarterGui"):SetCore("SendNotification", {
                         Title = "Goal Reached",
-                        Text = "You Have Reached" .. tostring(targetRebirthValue) .. " renacimientos",
+                        Text = "You Have Reached " .. tostring(targetRebirthValue) .. " rebirths",
                         Duration = 5
                     })
-                    
                     break
-						end
-						
-                game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                end
+                
+                game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("useRebirth")
             end
         end)
     end
-end, "automatic rebirth until reaching the goal")
+end)
 
 infiniteSwitch = rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", function(bool)
     _G.infiniteRebirthActive = bool
@@ -181,12 +181,12 @@ infiniteSwitch = rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", function
         end
         
         spawn(function()
-            while _G.infiniteRebirthActive and wait(0.1) do
-                game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+            while _G.infiniteRebirthActive and wait(0.5) do
+                game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("useRebirth")
             end
         end)
     end
-end, "rebirth infinitely")
+end)
 
 local Misc = window:AddTab("Misc")
 
