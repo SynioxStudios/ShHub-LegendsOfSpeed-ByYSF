@@ -30,7 +30,7 @@ local orbDropdown = farm:AddDropdown("Select Orb", function(text)
 end)
 
 local orbList = {
-    "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb"
+    "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"
 }
 
 for _, name in ipairs(orbList) do 
