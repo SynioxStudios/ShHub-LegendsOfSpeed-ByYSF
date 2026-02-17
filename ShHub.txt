@@ -182,18 +182,10 @@ end)
 local shopTab = window:AddTab("Pet & Aura")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-
 local selectedCrystal = "Blue Crystal"
-
 shopTab:AddDropdown("💎 Select Crystal", {
-    "Blue Crystal", 
-    "Red Crystal", 
-    "Lightning Crystal", 
-    "Inferno Crystal", 
-    "Lava Crystal", 
-    "Snow Crystal", 
-    "Electro Crystal", 
-    "Desert Crystal"
+    "Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", 
+    "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"
 }, function(val)
     selectedCrystal = val
 end)
@@ -202,7 +194,7 @@ shopTab:AddSwitch("🥚 Auto Open Crystal", function(state)
     _G.AutoCrystal = state
     if state then
         task.spawn(function()
-            local remote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
             while _G.AutoCrystal do
                 pcall(function()
                     remote:InvokeServer("openCrystal", selectedCrystal)
@@ -211,6 +203,11 @@ shopTab:AddSwitch("🥚 Auto Open Crystal", function(state)
             end
         end)
     end
+end)
+
+local selectedPet = ""
+local petDropdown = shopTab:AddDropdown("🐢 Select Pet", function(val)
+    selectedPet = val
 end)
 
 local elitePetList = {
@@ -226,10 +223,9 @@ local elitePetList = {
     "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"
 }
 
-local selectedPet = ""
-shopTab:AddDropdown("🐢 Select Pet", elitePetList, function(val)
-    selectedPet = val
-end)
+for _, name in ipairs(elitePetList) do 
+    petDropdown:Add(name) 
+end
 
 shopTab:AddSwitch("💎 Auto Buy Pet", function(state)
     _G.AutoBuyPet = state
@@ -237,16 +233,21 @@ shopTab:AddSwitch("💎 Auto Buy Pet", function(state)
         task.spawn(function()
             local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
             while _G.AutoBuyPet do
-                pcall(function()
-                    remote:InvokeServer("openCrystal", selectedPet)
-                end)
+                if selectedPet ~= "" and selectedPet ~= "None" then
+                    pcall(function()
+                        remote:InvokeServer("openCrystal", selectedPet)
+                    end)
+                end
                 task.wait(0.1)
             end
         end)
     end
 end)
 
----
+local selectedAura = ""
+local auraDropdown = shopTab:AddDropdown("✨ Select Aura", function(val)
+    selectedAura = val
+end)
 
 local auraList = {
     "None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", 
@@ -255,10 +256,9 @@ local auraList = {
     "Rainbow", "Holy", "Chaos", "Ultimate"
 }
 
-local selectedAura = ""
-shopTab:AddDropdown("✨ Select Aura", auraList, function(val)
-    selectedAura = val
-end)
+for _, name in ipairs(auraList) do 
+    auraDropdown:Add(name) 
+end
 
 shopTab:AddSwitch("🔥 Auto Buy Aura", function(state)
     _G.AutoBuyAura = state
@@ -266,9 +266,11 @@ shopTab:AddSwitch("🔥 Auto Buy Aura", function(state)
         task.spawn(function()
             local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
             while _G.AutoBuyAura do
-                pcall(function()
-                    remote:InvokeServer("openCrystal", selectedAura)
-                end)
+                if selectedAura ~= "" and selectedAura ~= "None" then
+                    pcall(function()
+                        remote:InvokeServer("openCrystal", selectedAura)
+                    end)
+                end
                 task.wait(0.1)
             end
         end)
