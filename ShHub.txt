@@ -179,6 +179,102 @@ infiniteSwitch = rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", function
     end
 end)
 
+local shopTab = window:AddTab("Pet & Aura")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+
+local selectedCrystal = "Blue Crystal"
+
+shopTab:AddDropdown("💎 Select Crystal", {
+    "Blue Crystal", 
+    "Red Crystal", 
+    "Lightning Crystal", 
+    "Inferno Crystal", 
+    "Lava Crystal", 
+    "Snow Crystal", 
+    "Electro Crystal", 
+    "Desert Crystal"
+}, function(val)
+    selectedCrystal = val
+end)
+
+shopTab:AddSwitch("🥚 Auto Open Crystal", function(state)
+    _G.AutoCrystal = state
+    if state then
+        task.spawn(function()
+            local remote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            while _G.AutoCrystal do
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedCrystal)
+                end)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local elitePetList = {
+    "None", "Red Bunny", "Red Kitty", "Green Vampy", "Blue Bunny", "Dark Golem", 
+    "Silver Dog", "Pink Butterfly", "Purple Pegasus", "Yellow Squeak", 
+    "Yellow Butterfly", "Green Golem", "Golden Angel", "Orange Pegasus", 
+    "Golden Pheonix", "Orange Falcon", "Green Firecaster", "Blue Firecaster", 
+    "White Pheonix", "Red Pheonix", "Red Firecaster", "Flaming Hedgehog", 
+    "Quantum Dragon", "Tundra Dragon", "Magic Butterfly", "Soul Fusion Dog", 
+    "Hypersonic Pegasus", "Dark Soul Birdie", "Eternal Nebula Dragon", 
+    "Shadows Edge Kitty", "Ultimate Overdrive Bunny", "Blue Pheonix", 
+    "Magical Pegasus", "Voltaic Falcon", "Electro Golem", "Maestro Dog", 
+    "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"
+}
+
+local selectedPet = ""
+shopTab:AddDropdown("🐢 Select Pet", elitePetList, function(val)
+    selectedPet = val
+end)
+
+shopTab:AddSwitch("💎 Auto Buy Pet", function(state)
+    _G.AutoBuyPet = state
+    if state then
+        task.spawn(function()
+            local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            while _G.AutoBuyPet do
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedPet)
+                end)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+---
+
+local auraList = {
+    "None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", 
+    "Purple Haze", "Orbit", "Magma", "Ice", "Electric", 
+    "Dark Matter", "Galaxy", "Soul", "Hyperspeed", 
+    "Rainbow", "Holy", "Chaos", "Ultimate"
+}
+
+local selectedAura = ""
+shopTab:AddDropdown("✨ Select Aura", auraList, function(val)
+    selectedAura = val
+end)
+
+shopTab:AddSwitch("🔥 Auto Buy Aura", function(state)
+    _G.AutoBuyAura = state
+    if state then
+        task.spawn(function()
+            local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            while _G.AutoBuyAura do
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedAura)
+                end)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
 local Misc = window:AddTab("Misc")
 
 Misc:AddSwitch("⏳ Anti Afk", function(Value)
