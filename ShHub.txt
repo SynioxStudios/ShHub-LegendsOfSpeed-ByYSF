@@ -179,20 +179,25 @@ infiniteSwitch = rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", function
     end
 end)
 
-local shopTab = window:AddTab("Pet & Aura")
+local pets = window:AddTab("Pets & Aura")
+pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-shopTab:AddLabel("💰 Auto Buy")
-
 local selectedCrystal = "Blue Crystal"
-local crystalDropdown = shopTab:AddDropdown("💎 Select Crystal", function(val)
-    selectedCrystal = val
+local crystalDropdown = pets:AddDropdown("💎 Select Crystal", function(text)
+    selectedCrystal = text
 end)
 
-local crystalList = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"}
-for _, name in pairs(crystalList) do crystalDropdown:Add(name) end
+crystalDropdown:Add("Blue Crystal")
+crystalDropdown:Add("Red Crystal")
+crystalDropdown:Add("Lightning Crystal")
+crystalDropdown:Add("Inferno Crystal")
+crystalDropdown:Add("Lava Crystal")
+crystalDropdown:Add("Snow Crystal")
+crystalDropdown:Add("Electro Crystal")
+crystalDropdown:Add("Desert Crystal")
 
-shopTab:AddSwitch("🥚 Auto Open Crystal", function(bool)
+pets:AddSwitch("Auto Open Crystal", function(bool)
     _G.AutoHatchCry = bool
     if bool then
         spawn(function()
@@ -208,14 +213,52 @@ shopTab:AddSwitch("🥚 Auto Open Crystal", function(bool)
 end)
 
 local selectedPet = "Swift Samurai"
-local petDropdown = shopTab:AddDropdown("🐢 Select Pet", function(val)
-    selectedPet = val
+local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
+    selectedPet = text
 end)
 
-local elitePetList = {"None", "Red Bunny", "Red Kitty", "Green Vampy", "Blue Bunny", "Dark Golem", "Silver Dog", "Pink Butterfly", "Purple Pegasus", "Yellow Squeak", "Yellow Butterfly", "Green Golem", "Golden Angel", "Orange Pegasus", "Golden Pheonix", "Orange Falcon", "Green Firecaster", "Blue Firecaster", "White Pheonix", "Red Pheonix", "Red Firecaster", "Flaming Hedgehog", "Quantum Dragon", "Tundra Dragon", "Magic Butterfly", "Soul Fusion Dog", "Hypersonic Pegasus", "Dark Soul Birdie", "Eternal Nebula Dragon", "Shadows Edge Kitty", "Ultimate Overdrive Bunny", "Blue Pheonix", "Magical Pegasus", "Voltaic Falcon", "Electro Golem", "Maestro Dog", "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"}
-for _, name in pairs(elitePetList) do petDropdown:Add(name) end
+petDropdown:Add("None")
+petDropdown:Add("Red Bunny")
+petDropdown:Add("Red Kitty")
+petDropdown:Add("Green Vampy")
+petDropdown:Add("Blue Bunny")
+petDropdown:Add("Dark Golem")
+petDropdown:Add("Silver Dog")
+petDropdown:Add("Pink Butterfly")
+petDropdown:Add("Purple Pegasus")
+petDropdown:Add("Yellow Squeak")
+petDropdown:Add("Yellow Butterfly")
+petDropdown:Add("Green Golem")
+petDropdown:Add("Golden Angel")
+petDropdown:Add("Orange Pegasus")
+petDropdown:Add("Golden Pheonix")
+petDropdown:Add("Orange Falcon")
+petDropdown:Add("Green Firecaster")
+petDropdown:Add("Blue Firecaster")
+petDropdown:Add("White Pheonix")
+petDropdown:Add("Red Pheonix")
+petDropdown:Add("Red Firecaster")
+petDropdown:Add("Flaming Hedgehog")
+petDropdown:Add("Quantum Dragon")
+petDropdown:Add("Tundra Dragon")
+petDropdown:Add("Magic Butterfly")
+petDropdown:Add("Soul Fusion Dog")
+petDropdown:Add("Hypersonic Pegasus")
+petDropdown:Add("Dark Soul Birdie")
+petDropdown:Add("Eternal Nebula Dragon")
+petDropdown:Add("Shadows Edge Kitty")
+petDropdown:Add("Ultimate Overdrive Bunny")
+petDropdown:Add("Blue Pheonix")
+petDropdown:Add("Magical Pegasus")
+petDropdown:Add("Voltaic Falcon")
+petDropdown:Add("Electro Golem")
+petDropdown:Add("Maestro Dog")
+petDropdown:Add("Divine Pegasus")
+petDropdown:Add("Golden Viking")
+petDropdown:Add("Speedy Sensei")
+petDropdown:Add("Swift Samurai")
 
-shopTab:AddSwitch("💎 Auto Buy Pet", function(bool)
+pets:AddSwitch("Auto Open Pet", function(bool)
     _G.AutoHatchPet = bool
     if bool then
         spawn(function()
@@ -230,15 +273,31 @@ shopTab:AddSwitch("💎 Auto Buy Pet", function(bool)
     end
 end)
 
-local selectedAura = "Ultimate"
-local auraDropdown = shopTab:AddDropdown("✨ Select Aura", function(val)
-    selectedAura = val
+local selectedAura = ""
+local auraDropdown = pets:AddDropdown("✨ Select Aura", function(text)
+    selectedAura = text
 end)
 
-local auraList = {"None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", "Purple Haze", "Orbit", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Hyperspeed", "Rainbow", "Holy", "Chaos", "Ultimate"}
-for _, name in pairs(auraList) do auraDropdown:Add(name) end
+auraDropdown:Add("None")
+auraDropdown:Add("Blue City")
+auraDropdown:Add("Yellow Lightning")
+auraDropdown:Add("Green Energy")
+auraDropdown:Add("Red Strike")
+auraDropdown:Add("Purple Haze")
+auraDropdown:Add("Orbit")
+auraDropdown:Add("Magma")
+auraDropdown:Add("Ice")
+auraDropdown:Add("Electric")
+auraDropdown:Add("Dark Matter")
+auraDropdown:Add("Galaxy")
+auraDropdown:Add("Soul")
+auraDropdown:Add("Hyperspeed")
+auraDropdown:Add("Rainbow")
+auraDropdown:Add("Holy")
+auraDropdown:Add("Chaos")
+auraDropdown:Add("Ultimate")
 
-shopTab:AddSwitch("🔥 Auto Buy Aura", function(bool)
+pets:AddSwitch("Auto Open Aura", function(bool)
     _G.AutoHatchAura = bool
     if bool then
         spawn(function()
