@@ -9,14 +9,17 @@ SynioxLib:StartFlowRGB(
 
 local Window = SynioxLib:CreateWindow({
     Title = "Syniox Hub | Legends Of Speed || HELLO - " .. displayName,
-    SubTitle = "V4.2",
+    SubTitle = "v4",
     TabWidth = 160,
-    Size = UDim2.fromOffset(430, 320),
+    Size = UDim2.fromOffset(430, 450),
     Acrylic = true,
     Theme = "SpeedHubX"
 })
 
 local MainFarm = Window:AddTab({ Title = "Main", Icon = "zap" })
+local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
+local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "dog" })
+local MiscTab = Window:AddTab({ Title = "Misc", Icon = "settings" })
 
 local selectedOrb = ""
 local farming = false
@@ -30,15 +33,10 @@ local orbDropdown = MainFarm:AddDropdown("OrbDropdown", {
     end
 })
 
-local orbList = {
-    "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"
-}
+local orbList = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"}
+for _, name in ipairs(orbList) do orbDropdown:Add(name) end
 
-for _, name in ipairs(orbList) do 
-    orbDropdown:Add(name) 
-end
-
-MainFarm:AddToggle("AutoOrbToggle", {
+MainFarm:AddToggle("AutoOrb", {
     Title = "Auto Farm Orbs",
     Default = false,
     Callback = function(state)
@@ -57,7 +55,7 @@ MainFarm:AddToggle("AutoOrbToggle", {
 })
 
 local hoopConnection
-MainFarm:AddToggle("AutoHoopToggle", {
+MainFarm:AddToggle("AutoHoop", {
     Title = "⬆️ Auto Hoop",
     Default = false,
     Callback = function(state)
@@ -65,7 +63,6 @@ MainFarm:AddToggle("AutoHoopToggle", {
             hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
                 local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                 local hoops = game.Workspace:FindFirstChild("Hoops")
-                
                 if root and hoops then
                     for _, hoop in ipairs(hoops:GetChildren()) do
                         if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
@@ -76,55 +73,11 @@ MainFarm:AddToggle("AutoHoopToggle", {
                 end
             end)
         else
-            if hoopConnection then
-                hoopConnection:Disconnect()
-                hoopConnection = nil
-            end
+            if hoopConnection then hoopConnection:Disconnect() hoopConnection = nil end
         end
     end
 })
 
-local autoRace = false
-MainFarm:AddToggle("AutoRaceToggle", {
-    Title = "🏁 Auto Race/ Win",
-    Default = false,
-    Callback = function(state)
-        autoRace = state
-    end
-})
-
-task.spawn(function()
-    while true do
-        task.wait(0.5)
-        if autoRace then
-            pcall(function()
-                local player = game.Players.LocalPlayer
-                local rEvents = game:GetService("ReplicatedStorage").rEvents
-                
-                if player.PlayerGui.gameGui.raceJoinLabel.Visible then
-                    rEvents.raceEvent:FireServer("joinRace")
-                end
-
-                local raceMaps = game.Workspace:FindFirstChild("raceMaps")
-                if raceMaps and player.currentMap.Value ~= "" then
-                    for _, map in ipairs(raceMaps:GetChildren()) do
-                        if player.currentMap.Value == map.mapValue.Value then
-                            repeat
-                                task.wait()
-                            until player.PlayerGui.gameGui.countdownLabels.goLabel.Visible or not autoRace
-
-                            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                player.Character.HumanoidRootPart.CFrame = map.finishPart.CFrame
-                            end
-                        end
-                    end
-                end
-            end)
-        end
-    end
-end)
-
-local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
 local targetRebirthValue = 0
 local infiniteToggle
 local targetToggle
@@ -132,14 +85,10 @@ local targetToggle
 RebirthTab:AddInput("RebirthTarget", {
     Title = "🔢 Rebirth Target",
     Default = "",
-    Placeholder = "Enter number...",
     Numeric = true,
     Finished = true,
     Callback = function(text)
-        local newValue = tonumber(text)
-        if newValue and newValue > 0 then
-            targetRebirthValue = newValue
-        end
+        targetRebirthValue = tonumber(text) or 0
     end
 })
 
@@ -149,14 +98,12 @@ targetToggle = RebirthTab:AddToggle("TargetRebirth", {
     Callback = function(bool)
         _G.targetRebirthActive = bool
         if bool then
-            if _G.infiniteRebirthActive then
-                infiniteToggle:SetValue(false)
-            end
+            if _G.infiniteRebirthActive then infiniteToggle:SetValue(false) end
             task.spawn(function()
                 while _G.targetRebirthActive do
                     task.wait(0.1)
-                    local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
-                    if currentRebirths >= targetRebirthValue then
+                    local current = game.Players.LocalPlayer.leaderstats.Rebirths.Value
+                    if current >= targetRebirthValue then
                         targetToggle:SetValue(false)
                         break
                     end
@@ -173,9 +120,7 @@ infiniteToggle = RebirthTab:AddToggle("InfiniteRebirth", {
     Callback = function(bool)
         _G.infiniteRebirthActive = bool
         if bool then
-            if _G.targetRebirthActive then
-                targetToggle:SetValue(false)
-            end
+            if _G.targetRebirthActive then targetToggle:SetValue(false) end
             task.spawn(function()
                 while _G.infiniteRebirthActive do
                     task.wait(0.1)
