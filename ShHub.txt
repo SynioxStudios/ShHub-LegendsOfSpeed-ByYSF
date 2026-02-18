@@ -16,64 +16,73 @@ local Window = SynioxLib:CreateWindow({
     Theme = "SpeedHubX"
 })
 
-local MainFarm = Window:AddTab({ Title = "Main", Icon = "zap" })
+local MainFarm = Window:AddTab({ Title = "Main", Icon = "bolt" })
 local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
 local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "dog" })
 local MiscTab = Window:AddTab({ Title = "Misc", Icon = "settings" })
 
-local selectedOrb = ""
-local farming = false
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local orbDropdown = MainFarm:AddDropdown("OrbDropdown", {
-    Title = "Select Orb",
-    Values = {},
-    Default = "",
+local orbList = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"}
+local selectedOrb = "Yellow Orb"
+
+MainFarm:AddDropdown("OrbDropdown", {
+    Title = "💎 Select Orb",
+    Values = orbList,
+    Default = "Yellow Orb",
     Callback = function(Value)
         selectedOrb = Value
     end
 })
 
-local orbList = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"}
-for _, name in ipairs(orbList) do orbDropdown:Add(name) end
-
 MainFarm:AddToggle("AutoOrb", {
-    Title = "Auto Farm Orbs",
+    Title = "🌕 Auto Farm Orbs",
     Default = false,
     Callback = function(state)
-        farming = state
-        if farming then
+        _G.farming = state
+        if state then
             task.spawn(function()
-                while farming do
+                while _G.farming do
                     if selectedOrb ~= "" then
-                        game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
+                        ReplicatedStorage.rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
                     end
-                    task.wait(0.001)
+                    task.wait()
                 end
             end)
         end
     end
 })
 
-local hoopConnection
 MainFarm:AddToggle("AutoHoop", {
-    Title = "⬆️ Auto Hoop",
+    Title = "⭕ Auto Hoop",
     Default = false,
     Callback = function(state)
+        _G.hoops = state
         if state then
-            hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
-                local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                local hoops = game.Workspace:FindFirstChild("Hoops")
-                if root and hoops then
-                    for _, hoop in ipairs(hoops:GetChildren()) do
-                        if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
-                            hoop.CFrame = root.CFrame
-                            game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
-                        end
-                    end
+            task.spawn(function()
+                while _G.hoops do
+                    ReplicatedStorage.rEvents.hoopEvent:FireServer("finishedHoop", "City")
+                    task.wait()
                 end
             end)
-        else
-            if hoopConnection then hoopConnection:Disconnect() hoopConnection = nil end
+        end
+    end
+})
+
+MainFarm:AddToggle("AutoRace", {
+    Title = "🏁 Auto Race",
+    Default = false,
+    Callback = function(state)
+        _G.AutoRace = state
+        if state then
+            task.spawn(function()
+                while _G.AutoRace do
+                    ReplicatedStorage.rEvents.raceEvent:FireServer("joinRace")
+                    task.wait(0.1)
+                    ReplicatedStorage.rEvents.raceEvent:FireServer("finishedRace")
+                    task.wait(0.5)
+                end
+            end)
         end
     end
 })
