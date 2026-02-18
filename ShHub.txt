@@ -8,8 +8,8 @@ SynioxLib:StartFlowRGB(
 )
 
 local Window = SynioxLib:CreateWindow({
-    Title = "Syniox Hub | Muscle Legends || HELLO - " .. displayName,
-    SubTitle = "V4.2 UI",
+    Title = "Syniox Hub | Legends Of Speed || HELLO - " .. displayName,
+    SubTitle = "V4.2",
     TabWidth = 160,
     Size = UDim2.fromOffset(430, 320),
     Acrylic = true,
@@ -21,9 +21,14 @@ local MainFarm = Window:AddTab({ Title = "Main", Icon = "zap" })
 local selectedOrb = ""
 local farming = false
 
-local orbDropdown = MainFarm:AddDropdown("Select Orb", function(text)
-    selectedOrb = text
-end)
+local orbDropdown = MainFarm:AddDropdown("OrbDropdown", {
+    Title = "Select Orb",
+    Values = {},
+    Default = "",
+    Callback = function(Value)
+        selectedOrb = Value
+    end
+})
 
 local orbList = {
     "Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"
@@ -33,52 +38,60 @@ for _, name in ipairs(orbList) do
     orbDropdown:Add(name) 
 end
 
-MainFarm:AddToggle("Auto Farm Orbs", function(state)
-    farming = state
-    if farming then
-        task.spawn(function()
-            while farming do
-                if selectedOrb ~= "" then
-                    game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
-                end
-                task.wait(0.001)
-            end
-        end)
-    end
-end)
-
-local hoopConnection
-
-MainFarm:AddToggle("⬆️ Auto Hoop", function(state)
-    local hooping = state
-    
-    if hooping then
-        hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
-            local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            local hoops = game.Workspace:FindFirstChild("Hoops")
-            
-            if root and hoops then
-                for _, hoop in ipairs(hoops:GetChildren()) do
-                    if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
-                        hoop.CFrame = root.CFrame
-                        game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+MainFarm:AddToggle("AutoOrbToggle", {
+    Title = "Auto Farm Orbs",
+    Default = false,
+    Callback = function(state)
+        farming = state
+        if farming then
+            task.spawn(function()
+                while farming do
+                    if selectedOrb ~= "" then
+                        game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, "City")
                     end
+                    task.wait(0.001)
                 end
-            end
-        end)
-    else
-        if hoopConnection then
-            hoopConnection:Disconnect()
-            hoopConnection = nil
+            end)
         end
     end
-end)
+})
+
+local hoopConnection
+MainFarm:AddToggle("AutoHoopToggle", {
+    Title = "⬆️ Auto Hoop",
+    Default = false,
+    Callback = function(state)
+        if state then
+            hoopConnection = game:GetService("RunService").RenderStepped:Connect(function()
+                local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                local hoops = game.Workspace:FindFirstChild("Hoops")
+                
+                if root and hoops then
+                    for _, hoop in ipairs(hoops:GetChildren()) do
+                        if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
+                            hoop.CFrame = root.CFrame
+                            game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
+                        end
+                    end
+                end
+            end)
+        else
+            if hoopConnection then
+                hoopConnection:Disconnect()
+                hoopConnection = nil
+            end
+        end
+    end
+})
 
 local autoRace = false
-
-MainFarm:AddToggle("🏁 Auto Race/ Win", function(state)
-    autoRace = state
-end)
+MainFarm:AddToggle("AutoRaceToggle", {
+    Title = "🏁 Auto Race/ Win",
+    Default = false,
+    Callback = function(state)
+        autoRace = state
+    end
+})
 
 task.spawn(function()
     while true do
