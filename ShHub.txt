@@ -1,31 +1,27 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/ByYusufGui-Syniox/refs/heads/main/SynioxGui.txt", true))()
+local SynioxLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/ByYSF-FLuent-U--V4/refs/heads/main/SynioxUi.txt"))()
 local displayName = game.Players.LocalPlayer.DisplayName
 
-local window = library:AddWindow("Syniox Hub | Legends Of Speed || HELLO - ".. displayName, {
-    title_bar = {
-        Color3.fromRGB(160, 0, 0), 
-        Color3.fromRGB(40, 0, 0),  
-        Color3.fromRGB(0, 0, 0)    
-    }, 
-    title_bar_transparency = 0.1, 
-    background = {
-        Color3.fromRGB(0, 0, 0), 
-        Color3.fromRGB(10, 10, 10), 
-        Color3.fromRGB(20, 20, 20)
-    }, 
-    background_transparency = 0.1, 
-    main_color = Color3.fromRGB(160, 0, 0), 
-    min_size = Vector2.new(450, 450), 
-    can_resize = true 
+SynioxLib:StartFlowRGB(
+    Color3.fromRGB(120, 0, 0),
+    Color3.fromRGB(40, 0, 0),
+    Color3.fromRGB(0, 0, 0)
+)
+
+local Window = SynioxLib:CreateWindow({
+    Title = "Syniox Hub | Muscle Legends || HELLO - " .. displayName,
+    SubTitle = "V4.2 UI",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(430, 320),
+    Acrylic = true,
+    Theme = "SpeedHubX"
 })
 
-local farm = window:AddTab("Farm")
-farm:AddLabel("Fast Farm")
+local MainFarm = Window:AddTab({ Title = "Main", Icon = "zap" })
 
 local selectedOrb = ""
 local farming = false
 
-local orbDropdown = farm:AddDropdown("Select Orb", function(text)
+local orbDropdown = MainFarm:AddDropdown("Select Orb", function(text)
     selectedOrb = text
 end)
 
@@ -37,7 +33,7 @@ for _, name in ipairs(orbList) do
     orbDropdown:Add(name) 
 end
 
-farm:AddSwitch("Auto Farm Orbs", function(state)
+MainFarm:AddToggle("Auto Farm Orbs", function(state)
     farming = state
     if farming then
         task.spawn(function()
@@ -53,7 +49,7 @@ end)
 
 local hoopConnection
 
-farm:AddSwitch("⬆️ Auto Hoop", function(state)
+MainFarm:AddToggle("⬆️ Auto Hoop", function(state)
     local hooping = state
     
     if hooping then
@@ -80,7 +76,7 @@ end)
 
 local autoRace = false
 
-farm:AddSwitch("🏁 Auto Race/ Win", function(state)
+MainFarm:AddToggle("🏁 Auto Race/ Win", function(state)
     autoRace = state
 end)
 
@@ -115,78 +111,82 @@ task.spawn(function()
     end
 end)
 
-local rebirths = window:AddTab("Rebirths")
+local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
 local targetRebirthValue = 0
-local infiniteSwitch
-local targetSwitch
+local infiniteToggle
+local targetToggle
 
-rebirths:AddTextBox("🔢 Rebirth Target", function(text)
-    local newValue = tonumber(text)
-    if newValue and newValue > 0 then
-        targetRebirthValue = newValue
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Updated Goal",
-            Text = "New goal: " .. tostring(targetRebirthValue) .. " rebirths",
-            Duration = 3
-        })
-    else
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Size",
-            Text = "Put a size larger than 0",
-            Duration = 3
-        })
-    end
-end)
-
-targetSwitch = rebirths:AddSwitch("🔄 Auto Rebirth Target", function(bool)
-    _G.targetRebirthActive = bool
-    if bool then
-        if _G.infiniteRebirthActive and infiniteSwitch then
-            infiniteSwitch:Set(false)
-            _G.infiniteRebirthActive = false
+RebirthTab:AddInput("RebirthTarget", {
+    Title = "🔢 Rebirth Target",
+    Default = "",
+    Placeholder = "Enter number...",
+    Numeric = true,
+    Finished = true,
+    Callback = function(text)
+        local newValue = tonumber(text)
+        if newValue and newValue > 0 then
+            targetRebirthValue = newValue
         end
-        spawn(function()
-            while _G.targetRebirthActive and wait(0.1) do
-                local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
-                if currentRebirths >= targetRebirthValue then
-                    targetSwitch:Set(false)
-                    _G.targetRebirthActive = false
-                    game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "Goal Reached",
-                        Text = "You Have Reached " .. tostring(targetRebirthValue) .. " rebirths",
-                        Duration = 5
-                    })
-                    break
+    end
+})
+
+targetToggle = RebirthTab:AddToggle("TargetRebirth", {
+    Title = "🔄 Auto Rebirth Target",
+    Default = false,
+    Callback = function(bool)
+        _G.targetRebirthActive = bool
+        if bool then
+            if _G.infiniteRebirthActive then
+                infiniteToggle:SetValue(false)
+            end
+            task.spawn(function()
+                while _G.targetRebirthActive do
+                    task.wait(0.1)
+                    local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
+                    if currentRebirths >= targetRebirthValue then
+                        targetToggle:SetValue(false)
+                        break
+                    end
+                    game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
                 end
-                game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
-            end
-        end)
-    end
-end)
-
-infiniteSwitch = rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", function(bool)
-    _G.infiniteRebirthActive = bool
-    if bool then
-        if _G.targetRebirthActive and targetSwitch then
-            targetSwitch:Set(false)
-            _G.targetRebirthActive = false
+            end)
         end
-        spawn(function()
-            while _G.infiniteRebirthActive and wait(0.1) do
-                game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
-            end
-        end)
     end
-end)
+})
 
-local pets = window:AddTab("Pets & Aura")
-pets:AddLabel("💰 Auto Buy")
+infiniteToggle = RebirthTab:AddToggle("InfiniteRebirth", {
+    Title = "♾️ Auto Rebirth (Infinitely)",
+    Default = false,
+    Callback = function(bool)
+        _G.infiniteRebirthActive = bool
+        if bool then
+            if _G.targetRebirthActive then
+                targetToggle:SetValue(false)
+            end
+            task.spawn(function()
+                while _G.infiniteRebirthActive do
+                    task.wait(0.1)
+                    game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
+                end
+            end)
+        end
+    end
+})
+
+local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "dog" })
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+PetsTab:AddSection("💰 Auto Buy")
+
 local selectedCrystal = "Blue Crystal"
-local crystalDropdown = pets:AddDropdown("💎 Select Crystal", function(text)
-    selectedCrystal = text
-end)
+local crystalDropdown = PetsTab:AddDropdown("CrystalDropdown", {
+    Title = "💎 Select Crystal",
+    Values = {},
+    Default = "Blue Crystal",
+    Callback = function(Value)
+        selectedCrystal = Value
+    end
+})
 
 crystalDropdown:Add("Blue Crystal")
 crystalDropdown:Add("Red Crystal")
@@ -197,25 +197,34 @@ crystalDropdown:Add("Snow Crystal")
 crystalDropdown:Add("Electro Crystal")
 crystalDropdown:Add("Desert Crystal")
 
-pets:AddSwitch("Auto Open Crystal", function(bool)
-    _G.AutoHatchCry = bool
-    if bool then
-        spawn(function()
-            while _G.AutoHatchCry and selectedCrystal ~= "" do
-                local crystalToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedCrystal)
-                if crystalToOpen then
-                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", crystalToOpen.Name)
+PetsTab:AddToggle("AutoHatchCryToggle", {
+    Title = "Auto Open Crystal",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchCry = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchCry and selectedCrystal ~= "" do
+                    local crystalToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedCrystal)
+                    if crystalToOpen then
+                        ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", crystalToOpen.Name)
+                    end
+                    task.wait(0.1)
                 end
-                task.wait(0.1)
-            end
-        end)
+            end)
+        end
     end
-end)
+})
 
 local selectedPet = "Swift Samurai"
-local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
-    selectedPet = text
-end)
+local petDropdown = PetsTab:AddDropdown("PetDropdown", {
+    Title = "🐢 Select Pet",
+    Values = {},
+    Default = "Swift Samurai",
+    Callback = function(Value)
+        selectedPet = Value
+    end
+})
 
 petDropdown:Add("None")
 petDropdown:Add("Red Bunny")
@@ -258,25 +267,34 @@ petDropdown:Add("Golden Viking")
 petDropdown:Add("Speedy Sensei")
 petDropdown:Add("Swift Samurai")
 
-pets:AddSwitch("Auto Open Pet", function(bool)
-    _G.AutoHatchPet = bool
-    if bool then
-        spawn(function()
-            while _G.AutoHatchPet and selectedPet ~= "" do
-                local petToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedPet)
-                if petToOpen then
-                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", petToOpen.Name)
+PetsTab:AddToggle("AutoHatchPetToggle", {
+    Title = "Auto Open Pet",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchPet = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchPet and selectedPet ~= "" do
+                    local petToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedPet)
+                    if petToOpen then
+                        ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", petToOpen.Name)
+                    end
+                    task.wait(0.1)
                 end
-                task.wait(0.1)
-            end
-        end)
+            end)
+        end
     end
-end)
+})
 
 local selectedAura = ""
-local auraDropdown = pets:AddDropdown("✨ Select Aura", function(text)
-    selectedAura = text
-end)
+local auraDropdown = PetsTab:AddDropdown("AuraDropdown", {
+    Title = "✨ Select Aura",
+    Values = {},
+    Default = "None",
+    Callback = function(Value)
+        selectedAura = Value
+    end
+})
 
 auraDropdown:Add("None")
 auraDropdown:Add("Blue City")
@@ -297,24 +315,28 @@ auraDropdown:Add("Holy")
 auraDropdown:Add("Chaos")
 auraDropdown:Add("Ultimate")
 
-pets:AddSwitch("Auto Open Aura", function(bool)
-    _G.AutoHatchAura = bool
-    if bool then
-        spawn(function()
-            while _G.AutoHatchAura and selectedAura ~= "" do
-                local auraToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedAura)
-                if auraToOpen then
-                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", auraToOpen.Name)
+PetsTab:AddToggle("AutoHatchAuraToggle", {
+    Title = "Auto Open Aura",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchAura = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchAura and selectedAura ~= "" do
+                    local auraToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedAura)
+                    if auraToOpen then
+                        ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", auraToOpen.Name)
+                    end
+                    task.wait(0.1)
                 end
-                task.wait(0.1)
-            end
-        end)
+            end)
+        end
     end
-end)
+})
 
-local Misc = window:AddTab("Misc")
+local MiscTab = Window:AddTab({ Title = "Misc", Icon = "settings" })
 
-Misc:AddSwitch("⏳ Anti Afk", function(Value)
+Misc:AddToggle("⏳ Anti Afk", function(Value)
     if Value then
         _G.AntiAfkActive = true
         
@@ -411,7 +433,7 @@ Misc:AddSwitch("⏳ Anti Afk", function(Value)
     end
 end)
 
-local switch = Misc:AddSwitch("🔒 Lock Position", function(Value)
+local switch = Misc:AddToggle("🔒 Lock Position", function(Value)
     if Value then
         
         local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
@@ -429,7 +451,7 @@ local switch = Misc:AddSwitch("🔒 Lock Position", function(Value)
     end
 end)
 
-Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
+Misc:AddToggle("🎰 Auto Fortune Wheel", function(Value)
     _G.autoFortuneWheelActive = Value
     if Value then
         local function openFortuneWheel()
@@ -510,7 +532,7 @@ Misc:AddButton("🔄 Rejoin Game", function()
     end)
 end)
 
-Misc:AddSwitch("👻 No Clip", function(bool)
+Misc:AddToggle("👻 No Clip", function(bool)
     noclipEnabled = bool
     
     if noclipEnabled then
