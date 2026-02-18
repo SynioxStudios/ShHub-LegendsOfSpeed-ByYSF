@@ -181,6 +181,7 @@ end)
 
 local shopTab = window:AddTab("Pet & Aura")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
 
 local selectedCrystal = "Blue Crystal"
 local crystalDropdown = shopTab:AddDropdown("💎 Select Crystal", function(val)
@@ -199,12 +200,11 @@ crystalDropdown:Add("Desert Crystal")
 shopTab:AddSwitch("🥚 Auto Open Crystal", function(state)
     _G.AutoCrystal = state
     if state then
-        spawn(function()
+        task.spawn(function()
             while _G.AutoCrystal and selectedCrystal ~= "" do
-                local crystalRemote = ReplicatedStorage.rEvents.openCrystalRemote
-                if crystalRemote then
-                    crystalRemote:InvokeServer("openCrystal", selectedCrystal)
-                end
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedCrystal)
+                end)
                 task.wait(0.1)
             end
         end)
@@ -260,12 +260,11 @@ petDropdown:Add("Swift Samurai")
 shopTab:AddSwitch("💎 Auto Buy Pet", function(state)
     _G.AutoBuyPet = state
     if state then
-        spawn(function()
+        task.spawn(function()
             while _G.AutoBuyPet and selectedPet ~= "" and selectedPet ~= "None" do
-                local petRemote = ReplicatedStorage.rEvents.openCrystalRemote
-                if petRemote then
-                    petRemote:InvokeServer("openCrystal", selectedPet)
-                end
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedPet)
+                end)
                 task.wait(0.1)
             end
         end)
@@ -299,12 +298,11 @@ auraDropdown:Add("Ultimate")
 shopTab:AddSwitch("🔥 Auto Buy Aura", function(state)
     _G.AutoBuyAura = state
     if state then
-        spawn(function()
+        task.spawn(function()
             while _G.AutoBuyAura and selectedAura ~= "" and selectedAura ~= "None" do
-                local auraRemote = ReplicatedStorage.rEvents.openCrystalRemote
-                if auraRemote then
-                    auraRemote:InvokeServer("openCrystal", selectedAura)
-                end
+                pcall(function()
+                    remote:InvokeServer("openCrystal", selectedAura)
+                end)
                 task.wait(0.1)
             end
         end)
