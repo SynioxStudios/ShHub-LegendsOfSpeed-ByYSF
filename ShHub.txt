@@ -181,128 +181,72 @@ end)
 
 local shopTab = window:AddTab("Pet & Aura")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local remote = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+
+shopTab:AddLabel("💰 Auto Buy")
 
 local selectedCrystal = "Blue Crystal"
 local crystalDropdown = shopTab:AddDropdown("💎 Select Crystal", function(val)
     selectedCrystal = val
 end)
 
-crystalDropdown:Add("Blue Crystal")
-crystalDropdown:Add("Red Crystal")
-crystalDropdown:Add("Lightning Crystal")
-crystalDropdown:Add("Inferno Crystal")
-crystalDropdown:Add("Lava Crystal")
-crystalDropdown:Add("Snow Crystal")
-crystalDropdown:Add("Electro Crystal")
-crystalDropdown:Add("Desert Crystal")
+local crystalList = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"}
+for _, name in pairs(crystalList) do crystalDropdown:Add(name) end
 
-shopTab:AddSwitch("🥚 Auto Open Crystal", function(state)
-    _G.AutoCrystal = state
-    if state then
-        task.spawn(function()
-            while _G.AutoCrystal and selectedCrystal ~= "" do
-                pcall(function()
-                    remote:InvokeServer("openCrystal", selectedCrystal)
-                end)
+shopTab:AddSwitch("🥚 Auto Open Crystal", function(bool)
+    _G.AutoHatchCry = bool
+    if bool then
+        spawn(function()
+            while _G.AutoHatchCry and selectedCrystal ~= "" do
+                local crystalToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedCrystal)
+                if crystalToOpen then
+                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", crystalToOpen.Name)
+                end
                 task.wait(0.1)
             end
         end)
     end
 end)
 
-local selectedPet = ""
+local selectedPet = "Swift Samurai"
 local petDropdown = shopTab:AddDropdown("🐢 Select Pet", function(val)
     selectedPet = val
 end)
 
-petDropdown:Add("None")
-petDropdown:Add("Red Bunny")
-petDropdown:Add("Red Kitty")
-petDropdown:Add("Green Vampy")
-petDropdown:Add("Blue Bunny")
-petDropdown:Add("Dark Golem")
-petDropdown:Add("Silver Dog")
-petDropdown:Add("Pink Butterfly")
-petDropdown:Add("Purple Pegasus")
-petDropdown:Add("Yellow Squeak")
-petDropdown:Add("Yellow Butterfly")
-petDropdown:Add("Green Golem")
-petDropdown:Add("Golden Angel")
-petDropdown:Add("Orange Pegasus")
-petDropdown:Add("Golden Pheonix")
-petDropdown:Add("Orange Falcon")
-petDropdown:Add("Green Firecaster")
-petDropdown:Add("Blue Firecaster")
-petDropdown:Add("White Pheonix")
-petDropdown:Add("Red Pheonix")
-petDropdown:Add("Red Firecaster")
-petDropdown:Add("Flaming Hedgehog")
-petDropdown:Add("Quantum Dragon")
-petDropdown:Add("Tundra Dragon")
-petDropdown:Add("Magic Butterfly")
-petDropdown:Add("Soul Fusion Dog")
-petDropdown:Add("Hypersonic Pegasus")
-petDropdown:Add("Dark Soul Birdie")
-petDropdown:Add("Eternal Nebula Dragon")
-petDropdown:Add("Shadows Edge Kitty")
-petDropdown:Add("Ultimate Overdrive Bunny")
-petDropdown:Add("Blue Pheonix")
-petDropdown:Add("Magical Pegasus")
-petDropdown:Add("Voltaic Falcon")
-petDropdown:Add("Electro Golem")
-petDropdown:Add("Maestro Dog")
-petDropdown:Add("Divine Pegasus")
-petDropdown:Add("Golden Viking")
-petDropdown:Add("Speedy Sensei")
-petDropdown:Add("Swift Samurai")
+local elitePetList = {"None", "Red Bunny", "Red Kitty", "Green Vampy", "Blue Bunny", "Dark Golem", "Silver Dog", "Pink Butterfly", "Purple Pegasus", "Yellow Squeak", "Yellow Butterfly", "Green Golem", "Golden Angel", "Orange Pegasus", "Golden Pheonix", "Orange Falcon", "Green Firecaster", "Blue Firecaster", "White Pheonix", "Red Pheonix", "Red Firecaster", "Flaming Hedgehog", "Quantum Dragon", "Tundra Dragon", "Magic Butterfly", "Soul Fusion Dog", "Hypersonic Pegasus", "Dark Soul Birdie", "Eternal Nebula Dragon", "Shadows Edge Kitty", "Ultimate Overdrive Bunny", "Blue Pheonix", "Magical Pegasus", "Voltaic Falcon", "Electro Golem", "Maestro Dog", "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"}
+for _, name in pairs(elitePetList) do petDropdown:Add(name) end
 
-shopTab:AddSwitch("💎 Auto Buy Pet", function(state)
-    _G.AutoBuyPet = state
-    if state then
-        task.spawn(function()
-            while _G.AutoBuyPet and selectedPet ~= "" and selectedPet ~= "None" do
-                pcall(function()
-                    remote:InvokeServer("openCrystal", selectedPet)
-                end)
+shopTab:AddSwitch("💎 Auto Buy Pet", function(bool)
+    _G.AutoHatchPet = bool
+    if bool then
+        spawn(function()
+            while _G.AutoHatchPet and selectedPet ~= "" do
+                local petToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedPet)
+                if petToOpen then
+                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", petToOpen.Name)
+                end
                 task.wait(0.1)
             end
         end)
     end
 end)
 
-local selectedAura = ""
+local selectedAura = "Ultimate"
 local auraDropdown = shopTab:AddDropdown("✨ Select Aura", function(val)
     selectedAura = val
 end)
 
-auraDropdown:Add("None")
-auraDropdown:Add("Blue City")
-auraDropdown:Add("Yellow Lightning")
-auraDropdown:Add("Green Energy")
-auraDropdown:Add("Red Strike")
-auraDropdown:Add("Purple Haze")
-auraDropdown:Add("Orbit")
-auraDropdown:Add("Magma")
-auraDropdown:Add("Ice")
-auraDropdown:Add("Electric")
-auraDropdown:Add("Dark Matter")
-auraDropdown:Add("Galaxy")
-auraDropdown:Add("Soul")
-auraDropdown:Add("Hyperspeed")
-auraDropdown:Add("Rainbow")
-auraDropdown:Add("Holy")
-auraDropdown:Add("Chaos")
-auraDropdown:Add("Ultimate")
+local auraList = {"None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", "Purple Haze", "Orbit", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Hyperspeed", "Rainbow", "Holy", "Chaos", "Ultimate"}
+for _, name in pairs(auraList) do auraDropdown:Add(name) end
 
-shopTab:AddSwitch("🔥 Auto Buy Aura", function(state)
-    _G.AutoBuyAura = state
-    if state then
-        task.spawn(function()
-            while _G.AutoBuyAura and selectedAura ~= "" and selectedAura ~= "None" do
-                pcall(function()
-                    remote:InvokeServer("openCrystal", selectedAura)
-                end)
+shopTab:AddSwitch("🔥 Auto Buy Aura", function(bool)
+    _G.AutoHatchAura = bool
+    if bool then
+        spawn(function()
+            while _G.AutoHatchAura and selectedAura ~= "" do
+                local auraToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedAura)
+                if auraToOpen then
+                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", auraToOpen.Name)
+                end
                 task.wait(0.1)
             end
         end)
