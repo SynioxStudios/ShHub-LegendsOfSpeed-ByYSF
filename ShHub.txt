@@ -11,7 +11,7 @@ local Window = SynioxLib:CreateWindow({
     Title = "Syniox Hub | LoS || HELLO - " .. displayName,
     SubTitle = "v4",
     TabWidth = 160,
-    Size = UDim2.fromOffset(400, 430),
+    Size = UDim2.fromOffset(470, 370),
     Acrylic = true,
     Theme = "SpeedHubX"
 })
@@ -160,11 +160,13 @@ infiniteToggle = RebirthTab:AddToggle("InfiniteRebirth", {
     end
 })
 
+local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-bag" })
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+-- [💎 CRYSTAL SECTION]
 PetsTab:AddSection("💎 Crystal Systems")
 
-local selectedCrystal = ""
+local selectedCrystal = "Blue Crystal"
 local crystalDropdown = PetsTab:AddDropdown("CrystalDropdown", {
     Title = "Select Crystal",
     Values = {},
@@ -190,7 +192,7 @@ PetsTab:AddToggle("AutoHatchCryToggle", {
         _G.AutoHatchCry = bool
         if bool then
             task.spawn(function()
-                while _G.AutoHatchCry do
+                while _G.AutoHatchCry and selectedCrystal ~= "" do
                     local crystalToOpen = ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedCrystal)
                     if crystalToOpen then
                         ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", crystalToOpen.Name)
@@ -202,9 +204,10 @@ PetsTab:AddToggle("AutoHatchCryToggle", {
     end
 })
 
+-- [🐢 PET SECTION]
 PetsTab:AddSection("🐢 Pet Systems")
 
-local selectedPet = ""
+local selectedPet = "Swift Samurai"
 local petDropdown = PetsTab:AddDropdown("PetDropdown", {
     Title = "Select Pet",
     Values = {},
@@ -275,6 +278,7 @@ PetsTab:AddToggle("AutoHatchPetToggle", {
     end
 })
 
+-- [✨ AURA SECTION]
 PetsTab:AddSection("✨ Aura Systems")
 
 local selectedAura = "Ultimate"
@@ -313,7 +317,7 @@ PetsTab:AddToggle("AutoHatchAuraToggle", {
         _G.AutoHatchAura = bool
         if bool then
             task.spawn(function()
-                while _G.AutoHatchAura do
+                while _G.AutoHatchAura and selectedAura ~= "" do
                     local auraToOpen = ReplicatedStorage:FindFirstChild("openCrystalsFolder") and ReplicatedStorage.openCrystalsFolder:FindFirstChild(selectedAura)
                     if auraToOpen then
                         ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", auraToOpen.Name)
