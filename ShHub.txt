@@ -11,27 +11,27 @@ local Window = SynioxLib:CreateWindow({
     Title = "Syniox Hub | LoS || HELLO - " .. displayName,
     SubTitle = "v4",
     TabWidth = 160,
-    Size = UDim2.fromOffset(470, 450),
+    Size = UDim2.fromOffset(355, 450),
     Acrylic = true,
     Theme = "SpeedHubX"
 })
 
 local Tabs = {
-    Farm = Window:AddTab({ Title = "Farm", Icon = "rbxassetid://4483345998" }),
-    Rebirths = Window:AddTab({ Title = "Rebirths", Icon = "rbxassetid://4483345998" }),
-    Pets = Window:AddTab({ Title = "Pets & Aura", Icon = "rbxassetid://4483345998" }),
-    Misc = Window:AddTab({ Title = "Misc", Icon = "rbxassetid://4483345998" })
+    Farm = Window:AddTab({ Title = "Home", Icon = "home" }),
+    Rebirths = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" }),
+    Pets = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-bag" }),
+    Misc = Window:AddTab({ Title = "Misc", Icon = "settings" })
 }
 
 local selectedOrb = ""
-local selectedMap = "City"
+local selectedMap = ""
 local farming = false
 local autoRace = false
 local hoopConnection
 
 Tabs.Farm:AddDropdown("SelectMap", {
-    Title = "📍 Select Map / Area",
-    Values = {"City", "Snow City", "Magma City", "Desert City", "Sky Island"},
+    Title = "📍 Select City",
+    Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Multi = false,
     Default = 1,
     Callback = function(Value)
@@ -57,7 +57,7 @@ Tabs.Farm:AddToggle("AutoFarmOrbs", {
         if farming then
             task.spawn(function()
                 while farming do
-                    if selectedOrb ~= "" then
+                    if selectedOrb ~= "" and selectedMap ~= "" then
                         game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", selectedOrb, selectedMap)
                     end
                     task.wait(0.001)
@@ -68,7 +68,7 @@ Tabs.Farm:AddToggle("AutoFarmOrbs", {
 })
 
 Tabs.Farm:AddToggle("AutoHoop", {
-    Title = "⬆️ Auto Hoop (Fast Render)",
+    Title = "⬆️ Auto Hoop",
     Default = false,
     Callback = function(state)
         if state then
@@ -77,7 +77,7 @@ Tabs.Farm:AddToggle("AutoHoop", {
                 local hoops = game.Workspace:FindFirstChild("Hoops")
                 if root and hoops then
                     for _, hoop in ipairs(hoops:GetChildren()) do
-                        if hoop:IsA("BasePart") or hoop:FindFirstChild("Apperance") then
+                        if hoop.Name == "Hoop" or hoop:FindFirstChild("Apperance") then
                             hoop.CFrame = root.CFrame
                             game:GetService("ReplicatedStorage").rEvents.hoopEvent:FireServer("finishedHoop")
                         end
@@ -207,8 +207,8 @@ local locations = {
     ["City"] = Vector3.new(-9658.28, 59.85, 809.54),
     ["Snow City"] = Vector3.new(-400.41, 4.30, 2166.24),
     ["Magma City"] = Vector3.new(1616.83, 4.05, 4330.50),
-    ["Desert City"] = Vector3.new(2314.12, 4.05, 916.70),
-    ["Sky Island"] = Vector3.new(-542.86, 12858.53, -2633.45)
+    ["Speed Jungle"] = Vector3.new(2314.12, 4.05, 916.70),
+    ["Legends Highway"] = Vector3.new(-542.86, 4.05, -2633.45)
 }
 local selLoc = ""
 local customWS = 16
@@ -273,7 +273,7 @@ Tabs.Misc:AddParagraph({ Title = "Teleports", Content = "Select a location and c
 
 Tabs.Misc:AddDropdown("TpLoc", {
     Title = "📍 Teleport Locations",
-    Values = {"City", "Snow City", "Magma City", "Desert City", "Sky Island"},
+    Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Default = 1,
     Callback = function(v)
         selLoc = v
@@ -289,8 +289,10 @@ Tabs.Misc:AddButton({
     end
 })
 
+Tabs.Misc:AddParagraph({ Title = "System Tools", Content = "Special UI Tools" })
+
 Tabs.Misc:AddToggle("AntiAfk", {
-    Title = "⏳ Anti-AFK (Status Panel)",
+    Title = "⏳ Anti-AFK",
     Default = false,
     Callback = function(v)
         if v then
