@@ -431,23 +431,3 @@ Tabs.Misc:AddToggle("LockPos", {
         end
     end
 })
-
-Tabs.Misc:AddToggle("AutoWheel", {
-    Title = "🎰 Auto Fortune Wheel",
-    Default = false,
-    Callback = function(Value)
-        _G.autoFortuneWheelActive = Value
-        if Value then
-            task.spawn(function()
-                while _G.autoFortuneWheelActive do
-                    local args = {
-                        [1] = "openFortuneWheel",
-                        [2] = game:GetService("ReplicatedStorage"):WaitForChild("fortuneWheelChances"):WaitForChild("Fortune Wheel")
-                    }
-                    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer(unpack(args))
-                    task.wait()
-                end
-            end)
-        end
-    end
-})
