@@ -30,7 +30,7 @@ local autoRace = false
 local hoopConnection
 
 Tabs.Farm:AddDropdown("SelectMap", {
-    Title = "📍 Select City",
+    Title = "📍 Select",
     Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Multi = false,
     Default = 1,
@@ -93,6 +93,26 @@ Tabs.Farm:AddToggle("AutoHoop", {
     end
 })
 
+Tabs.Farm:AddToggle("LockPos", {
+    Title = "🔒 Lock Position",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+                if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+        else
+            if getgenv().posLock then
+                getgenv().posLock:Disconnect()
+                getgenv().posLock = nil
+            end
+        end
+    end
+})
+
 Tabs.Farm:AddToggle("AutoRace", {
     Title = "🏁 Auto Race/Win",
     Default = false,
@@ -129,7 +149,7 @@ end)
 local targetRebirthValue = 0
 
 Tabs.Rebirths:AddInput("RebirthTarget", {
-    Title = "🔢 Rebirth Target",
+    Title = "Rebirth Target",
     Default = "0",
     Numeric = true,
     Finished = true,
@@ -175,26 +195,120 @@ Tabs.Rebirths:AddToggle("AutoRebirthInf", {
     end
 })
 
-local selectedCrystal = "Blue Crystal"
-
-Tabs.Pets:AddDropdown("CrystalSelect", {
-    Title = "💎 Select Crystal",
-    Values = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"},
-    Default = 1,
-    Callback = function(Value) selectedCrystal = Value end
+Tabs.Pets:AddParagraph({
+    Title = "💎 Crystal",
+    Content = "Select a crystal and enable auto open."
 })
 
-Tabs.Pets:AddToggle("AutoHatchCry", {
-    Title = "Auto Open Crystal",
+local selectedCrystal = ""
+local CrystalDropdown = Tabs.Pets:AddDropdown("SelectCrystal", {
+    Title = "Select Crystal Type",
+    Values = {},
+    Multi = false,
+    Default = "Red Crystal",
+    Callback = function(Value)
+        selectedCrystal = Value
+    end
+})
+
+CrystalDropdown:Add("Red Crystal")
+CrystalDropdown:Add("Blue Crystal")
+CrystalDropdown:Add("Purple Crystal")
+CrystalDropdown:Add("Yellow Crystal")
+CrystalDropdown:Add("Lightning Crystal")
+CrystalDropdown:Add("Snow Crystal")
+CrystalDropdown:Add("Inferno Crystal")
+CrystalDropdown:Add("Lava Crystal")
+CrystalDropdown:Add("Electro Legends Crystal")
+CrystalDropdown:Add("Desert Crystal")
+
+Tabs.Pets:AddToggle("AutoBuyCrystal", {
+    Title = "Auto Buy Crystal",
     Default = false,
-    Callback = function(bool)
-        _G.AutoHatchCry = bool
-        if bool then
+    Callback = function(Value)
+        _G.AutoHatchCrystal = Value
+        if Value then
             task.spawn(function()
-                while _G.AutoHatchCry do
-                    local crystalToOpen = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedCrystal)
-                    if crystalToOpen then
-                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", crystalToOpen.Name)
+                while _G.AutoHatchCrystal do
+                    if selectedCrystal ~= "" then
+                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", selectedCrystal)
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+Tabs.Pets:AddParagraph({
+    Title = "🐾 Select",
+    Content = "Select a specific pet from the shop and enable auto buy."
+})
+
+local selectedSpecificPet = ""
+local PetDropdown = Tabs.Pets:AddDropdown("SelectSpecificPet", {
+    Title = "Select Pet",
+    Values = {},
+    Multi = false,
+    Default = "Red Bunny",
+    Callback = function(Value)
+        selectedSpecificPet = Value
+    end
+})
+
+PetDropdown:Add("Red Bunny")
+PetDropdown:Add("Red Kitty")
+PetDropdown:Add("Green Vampy")
+PetDropdown:Add("Blue Bunny")
+PetDropdown:Add("Dark Golem")
+PetDropdown:Add("Silver Dog")
+PetDropdown:Add("Pink Butterfly")
+PetDropdown:Add("Purple Pegasus")
+PetDropdown:Add("Yellow Squeak")
+PetDropdown:Add("Yellow Butterfly")
+PetDropdown:Add("Green Golem")
+PetDropdown:Add("Golden Angel")
+PetDropdown:Add("Orange Pegasus")
+PetDropdown:Add("Golden Pheonix")
+PetDropdown:Add("Orange Falcon")
+PetDropdown:Add("Green Firecaster")
+PetDropdown:Add("Blue Firecaster")
+PetDropdown:Add("White Pheonix")
+PetDropdown:Add("Red Pheonix")
+PetDropdown:Add("Red Firecaster")
+PetDropdown:Add("Flaming Hedgehog")
+PetDropdown:Add("Quantum Dragon")
+PetDropdown:Add("Tundra Dragon")
+PetDropdown:Add("Magic Butterfly")
+PetDropdown:Add("Soul Fusion Dog")
+PetDropdown:Add("Hypersonic Pegasus")
+PetDropdown:Add("Dark Soul Birdie")
+PetDropdown:Add("Eternal Nebula Dragon")
+PetDropdown:Add("Shadows Edge Kitty")
+PetDropdown:Add("Ultimate Overdrive Bunny")
+PetDropdown:Add("Blue Pheonix")
+PetDropdown:Add("Magical Pegasus")
+PetDropdown:Add("Voltaic Falcon")
+PetDropdown:Add("Electro Golem")
+PetDropdown:Add("Maestro Dog")
+PetDropdown:Add("Divine Pegasus")
+PetDropdown:Add("Golden Viking")
+PetDropdown:Add("Speedy Sensei")
+PetDropdown:Add("Swift Samurai")
+
+Tabs.Pets:AddToggle("AutoBuyPet", {
+    Title = "Auto Buy Pet",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoHatchPet = Value
+        if Value then
+            task.spawn(function()
+                while _G.AutoHatchPet do
+                    if selectedSpecificPet ~= "" then
+                        local petToOpen = game:GetService("ReplicatedStorage").cPetShopFolder:FindFirstChild(selectedSpecificPet)
+                        if petToOpen then
+                            game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
+                        end
                     end
                     task.wait(0.1)
                 end
@@ -204,11 +318,11 @@ Tabs.Pets:AddToggle("AutoHatchCry", {
 })
 
 local locations = {
-    ["City"] = Vector3.new(-9658.28, 59.85, 809.54),
+    ["City"] = Vector3.new(-753, 4.19, 549.09),
     ["Snow City"] = Vector3.new(-400.41, 4.30, 2166.24),
     ["Magma City"] = Vector3.new(1616.83, 4.05, 4330.50),
-    ["Speed Jungle"] = Vector3.new(2314.12, 4.05, 916.70),
-    ["Legends Highway"] = Vector3.new(-542.86, 4.05, -2633.45)
+    ["Speed Jungle"] = Vector3.new(1920.05, 3.11, 12943.64),
+    ["Legends Highway"] = Vector3.new(3737.63, 71.72, 5593.70)
 }
 local selLoc = ""
 local customWS = 16
@@ -218,7 +332,7 @@ local wsEn, jpEn = false, false
 Tabs.Misc:AddParagraph({ Title = "Character Mods", Content = "Enter value and toggle to activate." })
 
 Tabs.Misc:AddInput("WSInput", {
-    Title = "WalkSpeed Value",
+    Title = "WalkSpeed",
     Default = "16",
     Numeric = true,
     Finished = true,
@@ -244,7 +358,7 @@ Tabs.Misc:AddToggle("WSToggle", {
 })
 
 Tabs.Misc:AddInput("JPInput", {
-    Title = "JumpPower Value",
+    Title = "JumpPower",
     Default = "50",
     Numeric = true,
     Finished = true,
@@ -272,7 +386,7 @@ Tabs.Misc:AddToggle("JPToggle", {
 Tabs.Misc:AddParagraph({ Title = "Teleports", Content = "Select a location and click teleport." })
 
 Tabs.Misc:AddDropdown("TpLoc", {
-    Title = "📍 Teleport Locations",
+    Title = "📍 Teleport",
     Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Default = 1,
     Callback = function(v)
@@ -292,84 +406,104 @@ Tabs.Misc:AddButton({
 Tabs.Misc:AddParagraph({ Title = "System Tools", Content = "Special UI Tools" })
 
 Tabs.Misc:AddToggle("AntiAfk", {
-    Title = "⏳ Anti-AFK",
+    Title = "⏳ Anti Afk",
     Default = false,
-    Callback = function(v)
-        if v then
-            _G.AntiAfkActive = true
-            local vu = game:GetService("VirtualUser")
-            _G.antiAfkConnection = game.Players.LocalPlayer.Idled:Connect(function()
-                if _G.AntiAfkActive then
-                    vu:CaptureController()
-                    vu:ClickButton2(Vector2.new())
-                end
-            end)
-            
-            local ScreenGui = Instance.new("ScreenGui")
-            local MainFrame = Instance.new("Frame")
-            local UICorner = Instance.new("UICorner")
-            local Title = Instance.new("TextLabel")
-            local TimerLabel = Instance.new("TextLabel")
-            local FPSLabel = Instance.new("TextLabel")
-            local MSLabel = Instance.new("TextLabel")
-            local UIStroke = Instance.new("UIStroke")
-
-            ScreenGui.Name = "Syniox_AntiAFK"
-            ScreenGui.Parent = game:GetService("CoreGui")
-            MainFrame.Parent = ScreenGui
-            MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-            MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
-            MainFrame.Size = UDim2.new(0, 120, 0, 125)
-            MainFrame.Active = true
-            MainFrame.Draggable = true 
-
-            UICorner.CornerRadius = UDim.new(0, 8)
-            UICorner.Parent = MainFrame
-            UIStroke.Parent = MainFrame
-            UIStroke.Color = Color3.fromRGB(150, 0, 0)
-            UIStroke.Thickness = 1.5
-
-            Title.Parent = MainFrame
-            Title.Size = UDim2.new(1, 0, 0, 28)
-            Title.Text = "Syniox Anti-Afk"
-            Title.TextColor3 = Color3.fromRGB(200, 0, 0)
-            Title.BackgroundTransparency = 1
-            Title.Font = Enum.Font.SourceSansBold
-
-            local function SetupLabel(lbl, text, pos)
-                lbl.Parent = MainFrame
-                lbl.Position = pos
-                lbl.Size = UDim2.new(1, 0, 0, 25)
-                lbl.Text = text
-                lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-                lbl.BackgroundTransparency = 1
-                lbl.TextSize = 16
-                lbl.Font = Enum.Font.SourceSansBold
-                lbl.TextXAlignment = Enum.TextXAlignment.Center
+    Callback = function(Value)
+    if Value then
+        _G.AntiAfkActive = true
+        
+        local vu = game:GetService("VirtualUser")
+        antiAfkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            if _G.AntiAfkActive then
+                vu:CaptureController()
+                vu:ClickButton2(Vector2.new())
             end
+        end)
 
-            SetupLabel(TimerLabel, "⏳ Time: 00:00:00", UDim2.new(0, 0, 0, 35))
-            SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
-            SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
+        local ScreenGui = Instance.new("ScreenGui")
+        local MainFrame = Instance.new("Frame")
+        local UICorner = Instance.new("UICorner")
+        local Title = Instance.new("TextLabel")
+        local Separator = Instance.new("Frame")
+        local TimerLabel = Instance.new("TextLabel")
+        local FPSLabel = Instance.new("TextLabel")
+        local MSLabel = Instance.new("TextLabel")
+        local UIStroke = Instance.new("UIStroke")
 
-            local startTime = os.time()
-            task.spawn(function()
-                while _G.AntiAfkActive do
-                    local diff = os.time() - startTime
-                    TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
-                    FPSLabel.Text = "🚀 FPS: " .. math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
-                    MSLabel.Text = "📡 MS: " .. math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
-                    task.wait(0.5)
-                end
-            end)
-        else
-            _G.AntiAfkActive = false
-            if _G.antiAfkConnection then _G.antiAfkConnection:Disconnect() end
-            local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
-            if oldGui then oldGui:Destroy() end
+        ScreenGui.Name = "Syniox_AntiAFK"
+        ScreenGui.Parent = game:GetService("CoreGui")
+        
+        MainFrame.Parent = ScreenGui
+        MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) 
+        MainFrame.BackgroundTransparency = 0.1
+        MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
+        MainFrame.Size = UDim2.new(0, 120, 0, 125)
+        MainFrame.Active = true
+        MainFrame.Draggable = true 
+
+        UICorner.CornerRadius = UDim.new(0, 8)
+        UICorner.Parent = MainFrame
+
+        UIStroke.Parent = MainFrame
+        UIStroke.Color = Color3.fromRGB(150, 0, 0) 
+        UIStroke.Thickness = 1.5
+
+        Title.Parent = MainFrame
+        Title.Size = UDim2.new(1, 0, 0, 28)
+        Title.Text = "Syniox Anti-Afk" 
+        Title.TextColor3 = Color3.fromRGB(200, 0, 0)
+        Title.BackgroundTransparency = 1
+        Title.TextSize = 15
+        Title.Font = Enum.Font.SourceSansBold
+
+        Separator.Parent = MainFrame
+        Separator.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        Separator.BorderSizePixel = 0
+        Separator.Position = UDim2.new(0.1, 0, 0, 28)
+        Separator.Size = UDim2.new(0.8, 0, 0, 1)
+
+        local function SetupLabel(lbl, text, pos)
+            lbl.Parent = MainFrame
+            lbl.Position = pos
+            lbl.Size = UDim2.new(1, 0, 0, 25)
+            lbl.Text = text
+            lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+            lbl.BackgroundTransparency = 1
+            lbl.TextSize = 16
+            lbl.Font = Enum.Font.SourceSansBold
+            lbl.TextXAlignment = Enum.TextXAlignment.Center
         end
+
+        SetupLabel(TimerLabel, "⏳ Time: 00:00:00", UDim2.new(0, 0, 0, 35))
+        SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
+        SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
+
+        local startTime = os.time()
+        local RunService = game:GetService("RunService")
+        local Stats = game:GetService("Stats")
+        
+        task.spawn(function()
+            while _G.AntiAfkActive do
+                local diff = os.time() - startTime
+                TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
+                
+                local fps = math.floor(1 / RunService.RenderStepped:Wait())
+                FPSLabel.Text = "🚀 FPS: " .. fps
+                
+                local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+                MSLabel.Text = "📡 MS: " .. ping
+                
+                task.wait(0.5)
+            end
+        end)
+
+    else
+        _G.AntiAfkActive = false
+        if antiAfkConnection then antiAfkConnection:Disconnect() end
+        local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
+        if oldGui then oldGui:Destroy() end
     end
-})
+end)
 
 Tabs.Misc:AddButton({
     Title = "🔄 Rejoin Game",
@@ -417,5 +551,77 @@ Tabs.Misc:AddButton({
             game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
         end)
         NoButton.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+    end
+})
+
+Tabs.Misc:AddToggle("LockPos", {
+    Title = "🔒 Lock Position",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+                if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+        else
+            if getgenv().posLock then
+                getgenv().posLock:Disconnect()
+                getgenv().posLock = nil
+            end
+        end
+    end
+})
+
+Tabs.Misc:AddToggle("AutoWheel", {
+    Title = "🎰 Auto Fortune Wheel",
+    Default = false,
+    Callback = function(Value)
+        _G.autoFortuneWheelActive = Value
+        if Value then
+            task.spawn(function()
+                while _G.autoFortuneWheelActive do
+                    local args = {
+                        [1] = "openFortuneWheel",
+                        [2] = game:GetService("ReplicatedStorage"):WaitForChild("fortuneWheelChances"):WaitForChild("Fortune Wheel")
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer(unpack(args))
+                    task.wait()
+                end
+            end)
+        end
+    end
+})
+
+Tabs.Misc:AddToggle("NoClip", {
+    Title = "👻 No Clip",
+    Default = false,
+    Callback = function(bool)
+        noclipEnabled = bool
+        if noclipEnabled then
+            if noclipConnection then noclipConnection:Disconnect() end
+            noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+                if noclipEnabled and game.Players.LocalPlayer.Character then
+                    for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                        if v:IsA("BasePart") then
+                            v.CanCollide = false
+                        end
+                    end
+                end
+            end)
+        else
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            if game.Players.LocalPlayer.Character then
+                for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end
     end
 })
