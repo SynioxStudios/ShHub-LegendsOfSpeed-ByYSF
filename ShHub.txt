@@ -451,35 +451,3 @@ Tabs.Misc:AddToggle("AutoWheel", {
         end
     end
 })
-
-Tabs.Misc:AddToggle("NoClip", {
-    Title = "👻 No Clip",
-    Default = false,
-    Callback = function(bool)
-        noclipEnabled = bool
-        if noclipEnabled then
-            if noclipConnection then noclipConnection:Disconnect() end
-            noclipConnection = game:GetService("RunService").Stepped:Connect(function()
-                if noclipEnabled and game.Players.LocalPlayer.Character then
-                    for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                        if v:IsA("BasePart") then
-                            v.CanCollide = false
-                        end
-                    end
-                end
-            end)
-        else
-            if noclipConnection then
-                noclipConnection:Disconnect()
-                noclipConnection = nil
-            end
-            if game.Players.LocalPlayer.Character then
-                for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = true
-                    end
-                end
-            end
-        end
-    end
-})
