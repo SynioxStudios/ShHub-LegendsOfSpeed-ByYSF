@@ -93,26 +93,6 @@ Tabs.Farm:AddToggle("AutoHoop", {
     end
 })
 
-Tabs.Farm:AddToggle("LockPos", {
-    Title = "🔒 Lock Position",
-    Default = false,
-    Callback = function(Value)
-        if Value then
-            local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
-                if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
-                end
-            end)
-        else
-            if getgenv().posLock then
-                getgenv().posLock:Disconnect()
-                getgenv().posLock = nil
-            end
-        end
-    end
-})
-
 Tabs.Farm:AddToggle("AutoRace", {
     Title = "🏁 Auto Race/Win",
     Default = false,
