@@ -122,3 +122,274 @@ task.spawn(function()
     end
 end)
 
+local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
+local targetRebirthValue = 0
+
+RebirthTab:AddInput("RebirthTarget", {
+    Title = "Rebirth Target",
+    Default = "0",
+    Numeric = true,
+    Finished = true,
+    Callback = function(Value)
+        targetRebirthValue = tonumber(Value) or 0
+    end
+})
+
+RebirthTab:AddToggle("AutoRebirthTarget", {
+    Title = "🔄 Auto Rebirth Target",
+    Default = false,
+    Callback = function(bool)
+        _G.targetRebirthActive = bool
+        if bool then
+            task.spawn(function()
+                while _G.targetRebirthActive do
+                    local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
+                    if currentRebirths >= targetRebirthValue then
+                        _G.targetRebirthActive = false
+                        break
+                    end
+                    game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+RebirthTab:AddToggle("AutoRebirthInf", {
+    Title = "♾️ Auto Rebirth (Infinitely)",
+    Default = false,
+    Callback = function(bool)
+        _G.infiniteRebirthActive = bool
+        if bool then
+            task.spawn(function()
+                while _G.infiniteRebirthActive do
+                    game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-cart" })
+
+PetsTab:AddSection("💎 Crystals")
+local selectedCrystal = "Blue Crystal"
+local cryDrop = PetsTab:AddDropdown("CryDrop", { Title = "Select Crystal", Values = {}, Default = "Blue Crystal", Callback = function(v) selectedCrystal = v end })
+cryDrop:Add("Blue Crystal")
+cryDrop:Add("Red Crystal")
+cryDrop:Add("Lightning Crystal")
+cryDrop:Add("Inferno Crystal")
+cryDrop:Add("Lava Crystal")
+cryDrop:Add("Snow Crystal")
+cryDrop:Add("Electro Crystal")
+cryDrop:Add("Desert Crystal")
+
+PetsTab:AddToggle("AutoCry", {
+    Title = "🥚 Auto Open Crystal",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchCry = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchCry do
+                    local cry = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedCrystal)
+                    if cry then 
+                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", cry.Name) 
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+PetsTab:AddSection("🐢 Pets")
+local selectedPet = "Swift Samurai"
+local petDrop = PetsTab:AddDropdown("PetDrop", { Title = "Select Pet", Values = {}, Default = "Swift Samurai", Callback = function(v) selectedPet = v end })
+petDrop:Add("None")
+petDrop:Add("Red Bunny")
+petDrop:Add("Red Kitty")
+petDrop:Add("Green Vampy")
+petDrop:Add("Blue Bunny")
+petDrop:Add("Dark Golem")
+petDrop:Add("Silver Dog")
+petDrop:Add("Pink Butterfly")
+petDrop:Add("Purple Pegasus")
+petDrop:Add("Yellow Squeak")
+petDrop:Add("Yellow Butterfly")
+petDrop:Add("Green Golem")
+petDrop:Add("Golden Angel")
+petDrop:Add("Orange Pegasus")
+petDrop:Add("Golden Pheonix")
+petDrop:Add("Orange Falcon")
+petDrop:Add("Green Firecaster")
+petDrop:Add("Blue Firecaster")
+petDrop:Add("White Pheonix")
+petDrop:Add("Red Pheonix")
+petDrop:Add("Red Firecaster")
+petDrop:Add("Flaming Hedgehog")
+petDrop:Add("Quantum Dragon")
+petDrop:Add("Tundra Dragon")
+petDrop:Add("Magic Butterfly")
+petDrop:Add("Soul Fusion Dog")
+petDrop:Add("Hypersonic Pegasus")
+petDrop:Add("Dark Soul Birdie")
+petDrop:Add("Eternal Nebula Dragon")
+petDrop:Add("Shadows Edge Kitty")
+petDrop:Add("Ultimate Overdrive Bunny")
+petDrop:Add("Blue Pheonix")
+petDrop:Add("Magical Pegasus")
+petDrop:Add("Voltaic Falcon")
+petDrop:Add("Electro Golem")
+petDrop:Add("Maestro Dog")
+petDrop:Add("Divine Pegasus")
+petDrop:Add("Golden Viking")
+petDrop:Add("Speedy Sensei")
+petDrop:Add("Swift Samurai")
+
+PetsTab:AddToggle("AutoPet", {
+    Title = "🐾 Auto Open Pet",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchPet = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchPet and selectedPet ~= "" do
+                    local petFolder = game:GetService("ReplicatedStorage"):FindFirstChild("cPetShopFolder")
+                    local petToOpen = petFolder and petFolder:FindFirstChild(selectedPet)
+                    if petToOpen then
+                        game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+PetsTab:AddSection("✨ Auras")
+local selectedAura = "Ultimate"
+local auraDrop = PetsTab:AddDropdown("AuraDrop", { Title = "Select Aura", Values = {}, Default = "Ultimate", Callback = function(v) selectedAura = v end })
+auraDrop:Add("None")
+auraDrop:Add("Blue City")
+auraDrop:Add("Yellow Lightning")
+auraDrop:Add("Green Energy")
+auraDrop:Add("Red Strike")
+auraDrop:Add("Purple Haze")
+auraDrop:Add("Orbit")
+auraDrop:Add("Magma")
+auraDrop:Add("Ice")
+auraDrop:Add("Electric")
+auraDrop:Add("Dark Matter")
+auraDrop:Add("Galaxy")
+auraDrop:Add("Soul")
+auraDrop:Add("Hyperspeed")
+auraDrop:Add("Rainbow")
+auraDrop:Add("Holy")
+auraDrop:Add("Chaos")
+auraDrop:Add("Ultimate")
+
+PetsTab:AddToggle("AutoAura", {
+    Title = "🔥 Auto Open Aura",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoHatchAura = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoHatchAura do
+                    local aura = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedAura)
+                    if aura then 
+                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", aura.Name) 
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+local Misc = Window:AddTab({ Title = "Misc", Icon = "settings" })
+
+Misc:AddToggle("AntiAfk", {
+    Title = "⏳ Anti Afk",
+    Default = false,
+    Callback = function(Value)
+        _G.AntiAfkActive = Value
+        if Value then
+            local vu = game:GetService("VirtualUser")
+            antiAfkConn = game.Players.LocalPlayer.Idled:Connect(function()
+                if _G.AntiAfkActive then 
+                    vu:CaptureController() 
+                    vu:ClickButton2(Vector2.new()) 
+                end
+            end)
+            local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+            ScreenGui.Name = "Syniox_AntiAFK"
+            local Frame = Instance.new("Frame", ScreenGui)
+            Frame.BackgroundColor3 = Color3.new(0,0,0)
+            Frame.Size = UDim2.new(0, 120, 0, 125)
+            Frame.Position = UDim2.new(0.05, 0, 0.4, 0)
+            local tLabel = Instance.new("TextLabel", Frame)
+            tLabel.Size = UDim2.new(1,0,1,0)
+            tLabel.TextColor3 = Color3.new(1,1,1)
+            tLabel.BackgroundTransparency = 1
+            tLabel.Font = Enum.Font.SourceSansBold
+            local startTime = os.time()
+            task.spawn(function()
+                while _G.AntiAfkActive do
+                    local diff = os.time() - startTime
+                    local fps = math.floor(1/game:GetService("RunService").RenderStepped:Wait())
+                    tLabel.Text = string.format("Syniox Anti-Afk\n\n⏳ %02d:%02d:%02d\n🚀 FPS: %d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60, fps)
+                    task.wait(1)
+                end
+            end)
+        else
+            if antiAfkConn then antiAfkConn:Disconnect() end
+            if game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK") then 
+                game:GetService("CoreGui").Syniox_AntiAFK:Destroy() 
+            end
+        end
+    end
+})
+
+Misc:AddButton({
+    Title = "🔄 Rejoin Game",
+    Callback = function()
+        local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+        local Frame = Instance.new("Frame", ScreenGui)
+        Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Frame.Size = UDim2.new(0, 250, 0, 150)
+        Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+        local Yes = Instance.new("TextButton", Frame)
+        Yes.Text = "YES"
+        Yes.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        Yes.Size = UDim2.new(0, 85, 0, 35)
+        Yes.Position = UDim2.new(0, 25, 0, 90)
+        local No = Instance.new("TextButton", Frame)
+        No.Text = "NO"
+        No.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        No.Size = UDim2.new(0, 85, 0, 35)
+        No.Position = UDim2.new(0, 140, 0, 90)
+        Yes.MouseButton1Click:Connect(function() 
+            game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer) 
+        end)
+        No.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+    end
+})
+
+Misc:AddToggle("NoClip", {
+    Title = "👻 No Clip",
+    Default = false,
+    Callback = function(bool)
+        _G.noclipEnabled = bool
+        game:GetService("RunService").Stepped:Connect(function()
+            if _G.noclipEnabled and game.Players.LocalPlayer.Character then
+                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then v.CanCollide = false end
+                end
+            end
+        end)
+    end
+})
