@@ -175,128 +175,6 @@ Tabs.Rebirths:AddToggle("AutoRebirthInf", {
     end
 })
 
-Tabs.Pets:AddParagraph({
-    Title = "💎 Crystal",
-    Content = "Select a crystal and enable auto open."
-})
-
-local selectedCrystal = ""
-local CrystalDropdown = Tabs.Pets:AddDropdown("SelectCrystal", {
-    Title = "Select Crystal Type",
-    Values = {},
-    Multi = false,
-    Default = "Red Crystal",
-    Callback = function(Value)
-        selectedCrystal = Value
-    end
-})
-
-CrystalDropdown:Add("Red Crystal")
-CrystalDropdown:Add("Blue Crystal")
-CrystalDropdown:Add("Purple Crystal")
-CrystalDropdown:Add("Yellow Crystal")
-CrystalDropdown:Add("Lightning Crystal")
-CrystalDropdown:Add("Snow Crystal")
-CrystalDropdown:Add("Inferno Crystal")
-CrystalDropdown:Add("Lava Crystal")
-CrystalDropdown:Add("Electro Legends Crystal")
-CrystalDropdown:Add("Desert Crystal")
-
-Tabs.Pets:AddToggle("AutoBuyCrystal", {
-    Title = "Auto Buy Crystal",
-    Default = false,
-    Callback = function(Value)
-        _G.AutoHatchCrystal = Value
-        if Value then
-            task.spawn(function()
-                while _G.AutoHatchCrystal do
-                    if selectedCrystal ~= "" then
-                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", selectedCrystal)
-                    end
-                    task.wait(0.1)
-                end
-            end)
-        end
-    end
-})
-
-Tabs.Pets:AddParagraph({
-    Title = "🐾 Select",
-    Content = "Select a specific pet from the shop and enable auto buy."
-})
-
-local selectedSpecificPet = ""
-local PetDropdown = Tabs.Pets:AddDropdown("SelectSpecificPet", {
-    Title = "Select Pet",
-    Values = {},
-    Multi = false,
-    Default = "Red Bunny",
-    Callback = function(Value)
-        selectedSpecificPet = Value
-    end
-})
-
-PetDropdown:Add("Red Bunny")
-PetDropdown:Add("Red Kitty")
-PetDropdown:Add("Green Vampy")
-PetDropdown:Add("Blue Bunny")
-PetDropdown:Add("Dark Golem")
-PetDropdown:Add("Silver Dog")
-PetDropdown:Add("Pink Butterfly")
-PetDropdown:Add("Purple Pegasus")
-PetDropdown:Add("Yellow Squeak")
-PetDropdown:Add("Yellow Butterfly")
-PetDropdown:Add("Green Golem")
-PetDropdown:Add("Golden Angel")
-PetDropdown:Add("Orange Pegasus")
-PetDropdown:Add("Golden Pheonix")
-PetDropdown:Add("Orange Falcon")
-PetDropdown:Add("Green Firecaster")
-PetDropdown:Add("Blue Firecaster")
-PetDropdown:Add("White Pheonix")
-PetDropdown:Add("Red Pheonix")
-PetDropdown:Add("Red Firecaster")
-PetDropdown:Add("Flaming Hedgehog")
-PetDropdown:Add("Quantum Dragon")
-PetDropdown:Add("Tundra Dragon")
-PetDropdown:Add("Magic Butterfly")
-PetDropdown:Add("Soul Fusion Dog")
-PetDropdown:Add("Hypersonic Pegasus")
-PetDropdown:Add("Dark Soul Birdie")
-PetDropdown:Add("Eternal Nebula Dragon")
-PetDropdown:Add("Shadows Edge Kitty")
-PetDropdown:Add("Ultimate Overdrive Bunny")
-PetDropdown:Add("Blue Pheonix")
-PetDropdown:Add("Magical Pegasus")
-PetDropdown:Add("Voltaic Falcon")
-PetDropdown:Add("Electro Golem")
-PetDropdown:Add("Maestro Dog")
-PetDropdown:Add("Divine Pegasus")
-PetDropdown:Add("Golden Viking")
-PetDropdown:Add("Speedy Sensei")
-PetDropdown:Add("Swift Samurai")
-
-Tabs.Pets:AddToggle("AutoBuyPet", {
-    Title = "Auto Buy Pet",
-    Default = false,
-    Callback = function(Value)
-        _G.AutoHatchPet = Value
-        if Value then
-            task.spawn(function()
-                while _G.AutoHatchPet do
-                    if selectedSpecificPet ~= "" then
-                        local petToOpen = game:GetService("ReplicatedStorage").cPetShopFolder:FindFirstChild(selectedSpecificPet)
-                        if petToOpen then
-                            game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
-                        end
-                    end
-                    task.wait(0.1)
-                end
-            end)
-        end
-    end
-})
-
 local locations = {
     ["City"] = Vector3.new(-753, 4.19, 549.09),
     ["Snow City"] = Vector3.new(-400.41, 4.30, 2166.24),
@@ -305,15 +183,15 @@ local locations = {
     ["Legends Highway"] = Vector3.new(3737.63, 71.72, 5593.70)
 }
 local selLoc = ""
-local customWS = 16
-local customJP = 50
+local customWS = 200
+local customJP = 250
 local wsEn, jpEn = false, false
 
 Tabs.Misc:AddParagraph({ Title = "Character Mods", Content = "Enter value and toggle to activate." })
 
 Tabs.Misc:AddInput("WSInput", {
     Title = "WalkSpeed",
-    Default = "16",
+    Default = "200",
     Numeric = true,
     Finished = true,
     Callback = function(v)
@@ -339,7 +217,7 @@ Tabs.Misc:AddToggle("WSToggle", {
 
 Tabs.Misc:AddInput("JPInput", {
     Title = "JumpPower",
-    Default = "50",
+    Default = "250",
     Numeric = true,
     Finished = true,
     Callback = function(v)
