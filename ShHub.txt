@@ -258,6 +258,8 @@ PetsTab:AddToggle("AutoPet", {
     end
 })
 
+PetsTab:AddSection("✨ Aura")
+
 local selectedAura = "None"
 PetsTab:AddDropdown("AuraDrop", { 
     Title = "Select Aura", 
@@ -312,21 +314,21 @@ TeleportTab:AddSection("🏙️ Spawn City's")
 TeleportTab:AddButton({
     Title = "❄️ Snow City",
     Callback = function()
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(-13204, 58, 4450)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-13165.71, 58.21, 4471.95)
     end
 })
 
 TeleportTab:AddButton({
     Title = "🌋 Magma City",
     Callback = function()
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(-11055, 217, 2)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-11046.25, 216.51, 10.32)
     end
 })
 
 TeleportTab:AddButton({
     Title = "🌳 Speed Jungle",
     Callback = function()
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(-12095, 58, -5455)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(1920.05, 3.11, 12943.64)
     end
 })
 
