@@ -292,14 +292,14 @@ TeleportTab:AddSection("🏙️ Spawn City's")
 TeleportTab:AddButton({
     Title = "❄️ Snow City",
     Callback = function()
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(-13165.71, 58.21, 4471.95)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-866.39, 4.19, 2165.71)
     end
 })
 
 TeleportTab:AddButton({
     Title = "🌋 Magma City",
     Callback = function()
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(-11046.25, 216.51, 10.32)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(1616.83, 4.24, 4330.65)
     end
 })
 
