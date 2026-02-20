@@ -31,7 +31,7 @@ local hoopConnection
 MainFarm:AddDropdown("SelectMap", {
     Title = "📍 Select Map",
     Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
-    Default = "City",
+    Default = "",
     Callback = function(Value)
         selectedMap = Value
     end
@@ -40,7 +40,7 @@ MainFarm:AddDropdown("SelectMap", {
 MainFarm:AddDropdown("SelectOrb", {
     Title = "💎 Select Orb",
     Values = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"},
-    Default = "Yellow Orb",
+    Default = "",
     Callback = function(Value)
         selectedOrb = Value
     end
