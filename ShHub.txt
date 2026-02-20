@@ -11,7 +11,7 @@ local Window = SynioxLib:CreateWindow({
     Title = "Syniox Hub | LoS || HELLO - " .. displayName,
     SubTitle = "v4",
     TabWidth = 160,
-    Size = UDim2.fromOffset(350, 490),
+    Size = UDim2.fromOffset(470, 350),
     Acrylic = true,
     Theme = "SpeedHubX"
 })
