@@ -17,18 +17,29 @@ local Window = SynioxLib:CreateWindow({
 })
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
+
+local MainFarm = Window:AddTab({ Title = "Main", Icon = "home" })
 
 local selectedOrb = ""
 local selectedMap = ""
 local farming = false
+
+local CityData = {
+    ["City"] = "City",
+    ["Snow City"] = "Snow City",
+    ["Magma City"] = "Magma City",
+    ["Speed Jungle"] = "Speed Jungle",
+    ["Legends Highway"] = "Legends Highway"
+}
 
 MainFarm:AddDropdown("SelectMap", {
     Title = "📍 Select Map",
     Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Default = "",
     Callback = function(Value)
-        selectedMap = Value
+        selectedMap = CityData[Value]
     end
 })
 
