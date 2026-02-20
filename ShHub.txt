@@ -236,13 +236,11 @@ PetsTab:AddToggle("AutoPet", {
     end
 })
 
-PetsTab:AddSection("✨ Auras")
-
 local selectedAura = "None"
 PetsTab:AddDropdown("AuraDrop", { 
     Title = "Select Aura", 
     Values = {"None", "Hyperblast", "1st Trail", "Dragon Fire", "Red Strike", "Purple Haze", "Yellow Trail", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Rainbow Steps", "Rainbow Speed", "Holy", "Chaos", "Ultimate"}, 
-    Default = "Ultimate", 
+    Default = "None", 
     Callback = function(v) 
         selectedAura = v 
     end 
@@ -257,7 +255,10 @@ PetsTab:AddToggle("AutoAura", {
             task.spawn(function()
                 while _G.AutoHatchAura do
                     if selectedAura ~= "" and selectedAura ~= "None" then
-                        ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", selectedAura)
+                        local auraToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedAura)
+                        if auraToOpen then
+                            ReplicatedStorage.cPetShopRemote:InvokeServer(auraToOpen)
+                        end
                     end
                     task.wait(0.1)
                 end
