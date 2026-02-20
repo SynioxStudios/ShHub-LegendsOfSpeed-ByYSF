@@ -11,7 +11,7 @@ local Window = SynioxLib:CreateWindow({
     Title = "Syniox Hub | LoS || HELLO - " .. displayName,
     SubTitle = "v4",
     TabWidth = 160,
-    Size = UDim2.fromOffset(450, 480),
+    Size = UDim2.fromOffset(350, 490),
     Acrylic = true,
     Theme = "SpeedHubX"
 })
@@ -272,40 +272,193 @@ Misc:AddToggle("AntiAfk", {
     Title = "⏳ Anti Afk",
     Default = false,
     Callback = function(Value)
-        _G.AntiAfkActive = Value
         if Value then
+            _G.AntiAfkActive = true
             local vu = game:GetService("VirtualUser")
-            antiAfkConn = game.Players.LocalPlayer.Idled:Connect(function()
-                if _G.AntiAfkActive then 
-                    vu:CaptureController() 
-                    vu:ClickButton2(Vector2.new()) 
+            antiAfkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                if _G.AntiAfkActive then
+                    vu:CaptureController()
+                    vu:ClickButton2(Vector2.new())
                 end
             end)
-            local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+
+            local ScreenGui = Instance.new("ScreenGui")
+            local MainFrame = Instance.new("Frame")
+            local UICorner = Instance.new("UICorner")
+            local Title = Instance.new("TextLabel")
+            local Separator = Instance.new("Frame")
+            local TimerLabel = Instance.new("TextLabel")
+            local FPSLabel = Instance.new("TextLabel")
+            local MSLabel = Instance.new("TextLabel")
+            local UIStroke = Instance.new("UIStroke")
+
             ScreenGui.Name = "Syniox_AntiAFK"
-            local Frame = Instance.new("Frame", ScreenGui)
-            Frame.BackgroundColor3 = Color3.new(0,0,0)
-            Frame.Size = UDim2.new(0, 120, 0, 125)
-            Frame.Position = UDim2.new(0.05, 0, 0.4, 0)
-            local tLabel = Instance.new("TextLabel", Frame)
-            tLabel.Size = UDim2.new(1,0,1,0)
-            tLabel.TextColor3 = Color3.new(1,1,1)
-            tLabel.BackgroundTransparency = 1
-            tLabel.Font = Enum.Font.SourceSansBold
+            ScreenGui.Parent = game:GetService("CoreGui")
+            
+            MainFrame.Parent = ScreenGui
+            MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) 
+            MainFrame.BackgroundTransparency = 0.1
+            MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
+            MainFrame.Size = UDim2.new(0, 120, 0, 125)
+            MainFrame.Active = true
+            MainFrame.Draggable = true 
+
+            UICorner.CornerRadius = UDim.new(0, 8)
+            UICorner.Parent = MainFrame
+
+            UIStroke.Parent = MainFrame
+            UIStroke.Color = Color3.fromRGB(150, 0, 0) 
+            UIStroke.Thickness = 1.5
+
+            Title.Parent = MainFrame
+            Title.Size = UDim2.new(1, 0, 0, 28)
+            Title.Text = "Syniox Anti-Afk" 
+            Title.TextColor3 = Color3.fromRGB(200, 0, 0)
+            Title.BackgroundTransparency = 1
+            Title.TextSize = 15
+            Title.Font = Enum.Font.SourceSansBold
+
+            Separator.Parent = MainFrame
+            Separator.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+            Separator.BorderSizePixel = 0
+            Separator.Position = UDim2.new(0.1, 0, 0, 28)
+            Separator.Size = UDim2.new(0.8, 0, 0, 1)
+
+            local function SetupLabel(lbl, text, pos)
+                lbl.Parent = MainFrame
+                lbl.Position = pos
+                lbl.Size = UDim2.new(1, 0, 0, 25)
+                lbl.Text = text
+                lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+                lbl.BackgroundTransparency = 1
+                lbl.TextSize = 16
+                lbl.Font = Enum.Font.SourceSansBold
+                lbl.TextXAlignment = Enum.TextXAlignment.Center
+            end
+
+            SetupLabel(TimerLabel, "⏳ Time: 00:00:00", UDim2.new(0, 0, 0, 35))
+            SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
+            SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
+
             local startTime = os.time()
+            local RunService = game:GetService("RunService")
+            local Stats = game:GetService("Stats")
+            
             task.spawn(function()
                 while _G.AntiAfkActive do
                     local diff = os.time() - startTime
-                    local fps = math.floor(1/game:GetService("RunService").RenderStepped:Wait())
-                    tLabel.Text = string.format("Syniox Anti-Afk\n\n⏳ %02d:%02d:%02d\n🚀 FPS: %d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60, fps)
-                    task.wait(1)
+                    TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
+                    local fps = math.floor(1 / RunService.RenderStepped:Wait())
+                    FPSLabel.Text = "🚀 FPS: " .. fps
+                    local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+                    MSLabel.Text = "📡 MS: " .. ping
+                    task.wait(0.5)
                 end
             end)
         else
-            if antiAfkConn then antiAfkConn:Disconnect() end
-            if game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK") then 
-                game:GetService("CoreGui").Syniox_AntiAFK:Destroy() 
+            _G.AntiAfkActive = false
+            if antiAfkConnection then antiAfkConnection:Disconnect() end
+            local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
+            if oldGui then oldGui:Destroy() end
+        end
+    end
+})
+
+Misc:AddSection("Character Settings")
+
+local walkSpeedValue = 200
+Misc:AddInput("WSInput", {
+    Title = "🏃 Walk Speed",
+    Default = "200",
+    Numeric = true,
+    Finished = true,
+    Callback = function(Value)
+        walkSpeedValue = tonumber(Value) or 16
+    end
+})
+
+Misc:AddToggle("EnableWalkSpeed", {
+    Title = "✅ Enable Walk Speed",
+    Default = false,
+    Callback = function(state)
+        _G.WSLoop = state
+        task.spawn(function()
+            while _G.WSLoop do
+                if player.Character and player.Character:FindFirstChild("Humanoid") then
+                    player.Character.Humanoid.WalkSpeed = walkSpeedValue
+                end
+                task.wait()
             end
+        end)
+    end
+})
+
+local jumpPowerValue = 250
+Misc:AddInput("JPInput", {
+    Title = "🚀 Jump Power",
+    Default = "250",
+    Numeric = true,
+    Finished = true,
+    Callback = function(Value)
+        jumpPowerValue = tonumber(Value) or 50
+    end
+})
+
+Misc:AddToggle("EnableJumpPower", {
+    Title = "✅ Enable Jump Power",
+    Default = false,
+    Callback = function(state)
+        _G.JPLoop = state
+        task.spawn(function()
+            while _G.JPLoop do
+                if player.Character and player.Character:FindFirstChild("Humanoid") then
+                    player.Character.Humanoid.UseJumpPower = true
+                    player.Character.Humanoid.JumpPower = jumpPowerValue
+                end
+                task.wait()
+            end
+        end)
+    end
+})
+
+Misc:AddSection("Other Settings")
+
+Misc:AddToggle("LockPos", {
+    Title = "🔒 Lock Position",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            local currentPos = player.Character.HumanoidRootPart.CFrame
+            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+                if player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+        else
+            if getgenv().posLock then
+                getgenv().posLock:Disconnect()
+                getgenv().posLock = nil
+            end
+        end
+    end
+})
+
+Misc:AddToggle("AutoFortune", {
+    Title = "🎰 Auto Fortune Wheel",
+    Default = false,
+    Callback = function(Value)
+        _G.autoFortuneWheelActive = Value
+        if Value then
+            task.spawn(function()
+                while _G.autoFortuneWheelActive do
+                    local args = {
+                        [1] = "openFortuneWheel",
+                        [2] = ReplicatedStorage:WaitForChild("fortuneWheelChances"):WaitForChild("Fortune Wheel")
+                    }
+                    ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer(unpack(args))
+                    task.wait(0.1)
+                end
+            end)
         end
     end
 })
@@ -313,25 +466,64 @@ Misc:AddToggle("AntiAfk", {
 Misc:AddButton({
     Title = "🔄 Rejoin Game",
     Callback = function()
-        local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-        local Frame = Instance.new("Frame", ScreenGui)
-        Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        Frame.Size = UDim2.new(0, 250, 0, 150)
+        local ScreenGui = Instance.new("ScreenGui")
+        local Frame = Instance.new("Frame")
+        local TextLabel = Instance.new("TextLabel")
+        local YesButton = Instance.new("TextButton")
+        local NoButton = Instance.new("TextButton")
+
+        ScreenGui.Parent = game:GetService("CoreGui")
+        ScreenGui.Name = "RejoinConfirm"
+
+        Frame.Name = "MainFrame"
+        Frame.Parent = ScreenGui
+        Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
         Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
-        local Yes = Instance.new("TextButton", Frame)
-        Yes.Text = "YES"
-        Yes.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-        Yes.Size = UDim2.new(0, 85, 0, 35)
-        Yes.Position = UDim2.new(0, 25, 0, 90)
-        local No = Instance.new("TextButton", Frame)
-        No.Text = "NO"
-        No.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        No.Size = UDim2.new(0, 85, 0, 35)
-        No.Position = UDim2.new(0, 140, 0, 90)
-        Yes.MouseButton1Click:Connect(function() 
-            game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer) 
+        Frame.Size = UDim2.new(0, 250, 0, 150)
+        Frame.BorderSizePixel = 0
+        Frame.Active = true
+        Frame.Draggable = true 
+        Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+        TextLabel.Parent = Frame
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.Position = UDim2.new(0, 10, 0, 20)
+        TextLabel.Size = UDim2.new(0, 230, 0, 50)
+        TextLabel.Font = Enum.Font.GothamBold
+        TextLabel.Text = "Are you sure you want to rejoin?"
+        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.TextSize = 16
+        TextLabel.TextWrapped = true
+
+        YesButton.Name = "YesButton"
+        YesButton.Parent = Frame
+        YesButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        YesButton.Position = UDim2.new(0, 25, 0, 90)
+        YesButton.Size = UDim2.new(0, 85, 0, 35)
+        YesButton.Font = Enum.Font.GothamBold
+        YesButton.Text = "YES"
+        YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        YesButton.TextSize = 14
+        Instance.new("UICorner", YesButton).CornerRadius = UDim.new(0, 6)
+
+        NoButton.Name = "NoButton"
+        NoButton.Parent = Frame
+        NoButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        NoButton.Position = UDim2.new(0, 140, 0, 90)
+        NoButton.Size = UDim2.new(0, 85, 0, 35)
+        NoButton.Font = Enum.Font.GothamBold
+        NoButton.Text = "NO"
+        NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NoButton.TextSize = 14
+        Instance.new("UICorner", NoButton).CornerRadius = UDim.new(0, 6)
+
+        YesButton.MouseButton1Click:Connect(function()
+            game:GetService("TeleportService"):Teleport(game.PlaceId, player)
         end)
-        No.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+
+        NoButton.MouseButton1Click:Connect(function()
+            ScreenGui:Destroy()
+        end)
     end
 })
 
@@ -341,8 +533,8 @@ Misc:AddToggle("NoClip", {
     Callback = function(bool)
         _G.noclipEnabled = bool
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.noclipEnabled and game.Players.LocalPlayer.Character then
-                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if _G.noclipEnabled and player.Character then
+                for _, v in pairs(player.Character:GetDescendants()) do
                     if v:IsA("BasePart") then v.CanCollide = false end
                 end
             end
