@@ -354,13 +354,13 @@ end
 local function FormatDisplay(value)
     local normal = FormatNumberWithCommas(value)
     local abbreviated = FormatAbbreviated(value)
-    return "[ " .. normal .. " | " .. abbreviated .. " ]"
+    return normal .. " (" .. abbreviated .. ")"
 end
 
-local UpdateSteps = LookDura:AddLabel("⚡ Steps: -")
-local UpdateGems = LookDura:AddLabel("💎 Gems: -")
-local UpdateRebirths = LookDura:AddLabel("🔄 Rebirths: -")
-local UpdateLevel = LookDura:AddLabel("📈 Level: -")
+local StatDisplay = LookDura:AddParagraph({
+    Title = "Player Stats",
+    Content = "Select a player to view data"
+})
 
 task.spawn(function()
     while task.wait(0.5) do
@@ -368,23 +368,26 @@ task.spawn(function()
             local target = game.Players:FindFirstChild(SelectPlayerName)
             if target then
                 local lstats = target:FindFirstChild("leaderstats")
-                
+                local steps = "0"
+                local rebirths = "0"
+                local gems = "0"
+                local level = "0"
+
                 if lstats then
-                    if lstats:FindFirstChild("Steps") then
-                        UpdateSteps:SetTitle("⚡ Steps: " .. FormatDisplay(lstats.Steps.Value))
-                    end
-                    if lstats:FindFirstChild("Rebirths") then
-                        UpdateRebirths:SetTitle("🔄 Rebirths: " .. FormatDisplay(lstats.Rebirths.Value))
-                    end
+                    if lstats:FindFirstChild("Steps") then steps = FormatDisplay(lstats.Steps.Value) end
+                    if lstats:FindFirstChild("Rebirths") then rebirths = FormatDisplay(lstats.Rebirths.Value) end
                 end
                 
-                if target:FindFirstChild("Gems") then
-                    UpdateGems:SetTitle("💎 Gems: " .. FormatDisplay(target.Gems.Value))
-                end
-                
-                if target:FindFirstChild("level") then
-                    UpdateLevel:SetTitle("📈 Level: " .. FormatDisplay(target.level.Value))
-                end
+                if target:FindFirstChild("Gems") then gems = FormatDisplay(target.Gems.Value) end
+                if target:FindFirstChild("level") then level = FormatDisplay(target.level.Value) end
+
+                StatDisplay:SetTitle("📊 Stats for: " .. target.Name)
+                StatDisplay:SetDesc(
+                    "⚡ Steps: " .. steps .. "\n" ..
+                    "💎 Gems: " .. gems .. "\n" ..
+                    "🔄 Rebirths: " .. rebirths .. "\n" ..
+                    "📈 Level: " .. level
+                )
             end
         end
     end
