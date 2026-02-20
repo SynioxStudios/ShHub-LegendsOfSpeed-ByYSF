@@ -310,6 +310,87 @@ TeleportTab:AddButton({
     end
 })
 
+local LookDura = Window:AddTab({ Title = "Stats", Icon = "bar-chart-2" })
+local SelectPlayerName = ""
+
+local PlayerDrop = LookDura:AddDropdown("SelectPlayer", {
+    Title = "Select Player",
+    Values = {},
+    Default = nil,
+    Callback = function(Value)
+        if Value then
+            SelectPlayerName = Value:match("| (.+)")
+        end
+    end
+})
+
+local function UpdatePlayerList()
+    local players = {}
+    for _, Plr in pairs(game:GetService("Players"):GetPlayers()) do
+        table.insert(players, Plr.DisplayName .. " | " .. Plr.Name)
+    end
+    PlayerDrop:SetValues(players)
+end
+
+UpdatePlayerList()
+game.Players.PlayerAdded:Connect(UpdatePlayerList)
+game.Players.PlayerRemoving:Connect(UpdatePlayerList)
+
+local function FormatNumberWithCommas(number)
+    local formatted = tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    return formatted:gsub("^,", "")
+end
+
+local function FormatAbbreviated(number)
+    local abbreviations = {"", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp"}
+    local abbreviationIndex = 1
+    while number >= 1000 and abbreviationIndex < #abbreviations do
+        number = number / 1000
+        abbreviationIndex = abbreviationIndex + 1
+    end
+    return string.format("%.2f", number) .. abbreviations[abbreviationIndex]
+end
+
+local function FormatDisplay(value)
+    local normal = FormatNumberWithCommas(value)
+    local abbreviated = FormatAbbreviated(value)
+    return "[ " .. normal .. " | " .. abbreviated .. " ]"
+end
+
+local UpdateSteps = LookDura:AddLabel("⚡ Steps: -")
+local UpdateGems = LookDura:AddLabel("💎 Gems: -")
+local UpdateRebirths = LookDura:AddLabel("🔄 Rebirths: -")
+local UpdateLevel = LookDura:AddLabel("📈 Level: -")
+local UpdateSpeed = LookDura:AddLabel("🏎️ Speed: -")
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if SelectPlayerName ~= "" then
+            local target = game.Players:FindFirstChild(SelectPlayerName)
+            if target then
+                local lstats = target:FindFirstChild("leaderstats")
+                if lstats then
+                    if lstats:FindFirstChild("Steps") then
+                        UpdateSteps.SetText("⚡ Steps: " .. FormatDisplay(lstats.Steps.Value))
+                    end
+                    if lstats:FindFirstChild("Rebirths") then
+                        UpdateRebirths.SetText("🔄 Rebirths: " .. FormatDisplay(lstats.Rebirths.Value))
+                    end
+                end
+                if target:FindFirstChild("Gems") then
+                    UpdateGems.SetText("💎 Gems: " .. FormatDisplay(target.Gems.Value))
+                end
+                if target:FindFirstChild("level") then
+                    UpdateLevel.SetText("📈 Level: " .. FormatDisplay(target.level.Value))
+                end
+                if target.Character and target.Character:FindFirstChild("Humanoid") then
+                    UpdateSpeed.SetText("🏎️ Speed: " .. math.floor(target.Character.Humanoid.WalkSpeed))
+                end
+            end
+        end
+    end
+end)
+
 local Misc = Window:AddTab({ Title = "Misc", Icon = "settings" })
 
 Misc:AddToggle("AntiAfk", {
