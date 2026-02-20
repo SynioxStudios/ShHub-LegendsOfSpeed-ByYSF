@@ -25,21 +25,15 @@ local MainFarm = Window:AddTab({ Title = "Main", Icon = "home" })
 local selectedOrb = ""
 local selectedMap = ""
 local farming = false
-
-local CityData = {
-    ["City"] = "City",
-    ["Snow City"] = "SnowCity",
-    ["Magma City"] = "MagmaCity",
-    ["Speed Jungle"] = "SpeedJungle",
-    ["Legends Highway"] = "LegendsHighway"
-}
+local autoRace = false
+local hoopConnection
 
 MainFarm:AddDropdown("SelectMap", {
     Title = "📍 Select Map",
     Values = {"City", "Snow City", "Magma City", "Speed Jungle", "Legends Highway"},
     Default = "",
     Callback = function(Value)
-        selectedMap = CityData[Value]
+        selectedMap = Value
     end
 })
 
@@ -63,7 +57,7 @@ MainFarm:AddToggle("AutoFarmOrbs", {
                     if selectedOrb ~= "" and selectedMap ~= "" then
                         ReplicatedStorage.rEvents.orbEvent:FireServer("collectOrb", selectedOrb, selectedMap)
                     end
-                    task.wait(0.01)
+                    task.wait(0.001)
                 end
             end)
         end
