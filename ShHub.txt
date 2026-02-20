@@ -123,15 +123,16 @@ task.spawn(function()
 end)
 
 MainFarm:AddToggle("AutoAllOrbs", {
-    Title = "⚡ Auto Farm All Orbs",
+    Title = "⚡ Auto Farm All Orbs [MAX]",
     Default = false,
     Callback = function(bool)
         _G.AutoAllOrbs = bool
         if bool then
             task.spawn(function()
+                local targetOrbs = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"}
                 while _G.AutoAllOrbs do
                     for _, v in pairs(game.Workspace:GetChildren()) do
-                        if v.Name:find("Orb") and v:FindFirstChild("TouchInterest") then
+                        if table.find(targetOrbs, v.Name) and v:FindFirstChild("TouchInterest") then
                             firetouchinterest(player.Character.HumanoidRootPart, v, 0)
                             firetouchinterest(player.Character.HumanoidRootPart, v, 1)
                         end
