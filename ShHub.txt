@@ -17,16 +17,11 @@ local Window = SynioxLib:CreateWindow({
 })
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
-
-local MainFarm = Window:AddTab({ Title = "Main", Icon = "home" })
 
 local selectedOrb = ""
 local selectedMap = ""
 local farming = false
-local autoRace = false
-local hoopConnection
 
 MainFarm:AddDropdown("SelectMap", {
     Title = "📍 Select Map",
@@ -57,7 +52,7 @@ MainFarm:AddToggle("AutoFarmOrbs", {
                     if selectedOrb ~= "" and selectedMap ~= "" then
                         ReplicatedStorage.rEvents.orbEvent:FireServer("collectOrb", selectedOrb, selectedMap)
                     end
-                    task.wait(0.001)
+                    task.wait(0.01)
                 end
             end)
         end
