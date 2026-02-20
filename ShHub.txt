@@ -28,10 +28,10 @@ local farming = false
 
 local CityData = {
     ["City"] = "City",
-    ["Snow City"] = "Snow City",
-    ["Magma City"] = "Magma City",
-    ["Speed Jungle"] = "Speed Jungle",
-    ["Legends Highway"] = "Legends Highway"
+    ["Snow City"] = "SnowCity",
+    ["Magma City"] = "MagmaCity",
+    ["Speed Jungle"] = "SpeedJungle",
+    ["Legends Highway"] = "LegendsHighway"
 }
 
 MainFarm:AddDropdown("SelectMap", {
