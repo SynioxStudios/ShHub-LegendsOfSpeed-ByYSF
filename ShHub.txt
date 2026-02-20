@@ -122,6 +122,27 @@ task.spawn(function()
     end
 end)
 
+MainFarm:AddToggle("AutoAllOrbs", {
+    Title = "⚡ Auto Farm All Orbs",
+    Default = false,
+    Callback = function(bool)
+        _G.AutoAllOrbs = bool
+        if bool then
+            task.spawn(function()
+                while _G.AutoAllOrbs do
+                    for _, v in pairs(game.Workspace:GetChildren()) do
+                        if v.Name:find("Orb") and v:FindFirstChild("TouchInterest") then
+                            firetouchinterest(player.Character.HumanoidRootPart, v, 0)
+                            firetouchinterest(player.Character.HumanoidRootPart, v, 1)
+                        end
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
 local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
 local targetRebirthValue = 0
 
@@ -264,6 +285,47 @@ PetsTab:AddToggle("AutoAura", {
                 end
             end)
         end
+    end
+})
+
+local TeleportTab = Window:AddTab({ Title = "Teleport", Icon = "map-pin" })
+
+TeleportTab:AddButton({
+    Title = "🏙️ City",
+    Description = "X: -753, Y: 4, Z: 549",
+    Callback = function()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-753.82, 4.19, 549.09)
+    end
+})
+
+TeleportTab:AddButton({
+    Title = "🛣️ Legends Highway",
+    Description = "X: 3737, Y: 71, Z: 5593",
+    Callback = function()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(3737.63, 71.72, 5593.70)
+    end
+})
+
+TeleportTab:AddSection("🏙️ Spawn City's")
+
+TeleportTab:AddButton({
+    Title = "❄️ Snow City",
+    Callback = function()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-13204, 58, 4450)
+    end
+})
+
+TeleportTab:AddButton({
+    Title = "🌋 Magma City",
+    Callback = function()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-11055, 217, 2)
+    end
+})
+
+TeleportTab:AddButton({
+    Title = "🌳 Speed Jungle",
+    Callback = function()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(-12095, 58, -5455)
     end
 })
 
@@ -461,6 +523,67 @@ Misc:AddToggle("AutoFortune", {
                 end
             end)
         end
+    end
+})
+
+Misc:AddSection("Optimization")
+
+Misc:AddButton({
+    Title = "🚀 FPS Boost",
+    Description = "Removes textures and shadows to increase FPS",
+    Callback = function()
+        local terrain = game.Workspace:FindFirstChildOfClass('Terrain')
+        terrain.WaterWaveSize = 0
+        terrain.WaterWaveSpeed = 0
+        terrain.WaterReflectance = 0
+        terrain.WaterTransparency = 0
+        game:GetService("Lighting").GlobalShadows = false
+        game:GetService("Lighting").FogEnd = 9e9
+        settings().Rendering.QualityLevel = 1
+        for _, v in pairs(game:GetDescendants()) do
+            if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+                v.Material = Enum.Material.Plastic
+                v.Reflectance = 0
+            elseif v:IsA("Decal") or v:IsA("Texture") then
+                v:Destroy()
+            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                v.Enabled = false
+            elseif v:IsA("Explosion") then
+                v.Visible = false
+            end
+        end
+    end
+})
+
+Misc:AddToggle("WhiteScreen", {
+    Title = "🖥️ CPU Boost (White Screen)",
+    Default = false,
+    Callback = function(bool)
+        _G.WhiteScreen = bool
+        if _G.WhiteScreen then
+            game:GetService("RunService"):Set3dRenderingEnabled(false)
+        else
+            game:GetService("RunService"):Set3dRenderingEnabled(true)
+        end
+    end
+})
+
+Misc:AddToggle("AutoChest", {
+    Title = "🎁 Auto Collect Chests",
+    Default = false,
+    Callback = function(state)
+        _G.AutoChest = state
+        task.spawn(function()
+            while _G.AutoChest do
+                for _, v in pairs(game.Workspace:GetChildren()) do
+                    if v.Name:find("Chest") and v:FindFirstChild("TouchInterest") then
+                        firetouchinterest(player.Character.HumanoidRootPart, v, 0)
+                        firetouchinterest(player.Character.HumanoidRootPart, v, 1)
+                    end
+                end
+                task.wait(5)
+            end
+        end)
     end
 })
 
