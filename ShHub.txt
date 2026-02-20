@@ -172,13 +172,12 @@ RebirthTab:AddToggle("AutoRebirthInf", {
     end
 })
 
-
 local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-cart" })
 
 PetsTab:AddSection("💎 Crystals")
 
 local selectedCrystal = "Blue Crystal"
-local cryDrop = PetsTab:AddDropdown("CryDrop", { 
+PetsTab:AddDropdown("CryDrop", { 
     Title = "Select Crystal", 
     Values = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"}, 
     Default = "Blue Crystal", 
@@ -195,10 +194,7 @@ PetsTab:AddToggle("AutoCry", {
         if bool then
             task.spawn(function()
                 while _G.AutoHatchCry do
-                    local cry = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedCrystal)
-                    if cry then 
-                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", cry.Name) 
-                    end
+                    ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", selectedCrystal)
                     task.wait(0.1)
                 end
             end)
@@ -208,56 +204,15 @@ PetsTab:AddToggle("AutoCry", {
 
 PetsTab:AddSection("🐢 Pets")
 
-local selectedPet = "Swift Samurai"
-local petDrop = PetsTab:AddDropdown("PetDrop", { 
+local selectedPet = "None"
+PetsTab:AddDropdown("PetDrop", { 
     Title = "Select Pet", 
-    Values = {}, 
+    Values = {"None", "Red Bunny", "Red Kitty", "Green Vampy", "Blue Bunny", "Dark Golem", "Silver Dog", "Pink Butterfly", "Purple Pegasus", "Yellow Squeak", "Yellow Butterfly", "Green Golem", "Golden Angel", "Orange Pegasus", "Golden Pheonix", "Orange Falcon", "Green Firecaster", "Blue Firecaster", "White Pheonix", "Red Pheonix", "Red Firecaster", "Flaming Hedgehog", "Quantum Dragon", "Tundra Dragon", "Magic Butterfly", "Soul Fusion Dog", "Hypersonic Pegasus", "Dark Soul Birdie", "Eternal Nebula Dragon", "Shadows Edge Kitty", "Ultimate Overdrive Bunny", "Blue Pheonix", "Magical Pegasus", "Voltaic Falcon", "Electro Golem", "Maestro Dog", "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"}, 
     Default = "Swift Samurai", 
     Callback = function(v) 
         selectedPet = v 
     end 
 })
-
-petDrop:Add("None")
-petDrop:Add("Red Bunny")
-petDrop:Add("Red Kitty")
-petDrop:Add("Green Vampy")
-petDrop:Add("Blue Bunny")
-petDrop:Add("Dark Golem")
-petDrop:Add("Silver Dog")
-petDrop:Add("Pink Butterfly")
-petDrop:Add("Purple Pegasus")
-petDrop:Add("Yellow Squeak")
-petDrop:Add("Yellow Butterfly")
-petDrop:Add("Green Golem")
-petDrop:Add("Golden Angel")
-petDrop:Add("Orange Pegasus")
-petDrop:Add("Golden Pheonix")
-petDrop:Add("Orange Falcon")
-petDrop:Add("Green Firecaster")
-petDrop:Add("Blue Firecaster")
-petDrop:Add("White Pheonix")
-petDrop:Add("Red Pheonix")
-petDrop:Add("Red Firecaster")
-petDrop:Add("Flaming Hedgehog")
-petDrop:Add("Quantum Dragon")
-petDrop:Add("Tundra Dragon")
-petDrop:Add("Magic Butterfly")
-petDrop:Add("Soul Fusion Dog")
-petDrop:Add("Hypersonic Pegasus")
-petDrop:Add("Dark Soul Birdie")
-petDrop:Add("Eternal Nebula Dragon")
-petDrop:Add("Shadows Edge Kitty")
-petDrop:Add("Ultimate Overdrive Bunny")
-petDrop:Add("Blue Pheonix")
-petDrop:Add("Magical Pegasus")
-petDrop:Add("Voltaic Falcon")
-petDrop:Add("Electro Golem")
-petDrop:Add("Maestro Dog")
-petDrop:Add("Divine Pegasus")
-petDrop:Add("Golden Viking")
-petDrop:Add("Speedy Sensei")
-petDrop:Add("Swift Samurai")
 
 PetsTab:AddToggle("AutoPet", {
     Title = "🐾 Auto Open Pet",
@@ -268,10 +223,10 @@ PetsTab:AddToggle("AutoPet", {
             task.spawn(function()
                 while _G.AutoHatchPet do
                     if selectedPet ~= "" and selectedPet ~= "None" then
-                        local petFolder = game:GetService("ReplicatedStorage"):FindFirstChild("cPetShopFolder")
+                        local petFolder = ReplicatedStorage:FindFirstChild("cPetShopFolder")
                         local petToOpen = petFolder and petFolder:FindFirstChild(selectedPet)
                         if petToOpen then
-                            game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
+                            ReplicatedStorage.cPetShopRemote:InvokeServer(petToOpen)
                         end
                     end
                     task.wait(0.1)
@@ -283,8 +238,8 @@ PetsTab:AddToggle("AutoPet", {
 
 PetsTab:AddSection("✨ Auras")
 
-local selectedAura = "Ultimate"
-local auraDrop = PetsTab:AddDropdown("AuraDrop", { 
+local selectedAura = "None"
+PetsTab:AddDropdown("AuraDrop", { 
     Title = "Select Aura", 
     Values = {"None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", "Purple Haze", "Orbit", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Hyperspeed", "Rainbow", "Holy", "Chaos", "Ultimate"}, 
     Default = "Ultimate", 
@@ -302,10 +257,7 @@ PetsTab:AddToggle("AutoAura", {
             task.spawn(function()
                 while _G.AutoHatchAura do
                     if selectedAura ~= "" and selectedAura ~= "None" then
-                        local aura = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedAura)
-                        if aura then 
-                            game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", aura.Name) 
-                        end
+                        ReplicatedStorage.rEvents.openCrystalRemote:InvokeServer("openCrystal", selectedAura)
                     end
                     task.wait(0.1)
                 end
