@@ -172,19 +172,20 @@ RebirthTab:AddToggle("AutoRebirthInf", {
     end
 })
 
+
 local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-cart" })
 
 PetsTab:AddSection("💎 Crystals")
+
 local selectedCrystal = "Blue Crystal"
-local cryDrop = PetsTab:AddDropdown("CryDrop", { Title = "Select Crystal", Values = {}, Default = "Blue Crystal", Callback = function(v) selectedCrystal = v end })
-cryDrop:Add("Blue Crystal")
-cryDrop:Add("Red Crystal")
-cryDrop:Add("Lightning Crystal")
-cryDrop:Add("Inferno Crystal")
-cryDrop:Add("Lava Crystal")
-cryDrop:Add("Snow Crystal")
-cryDrop:Add("Electro Crystal")
-cryDrop:Add("Desert Crystal")
+local cryDrop = PetsTab:AddDropdown("CryDrop", { 
+    Title = "Select Crystal", 
+    Values = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"}, 
+    Default = "Blue Crystal", 
+    Callback = function(v) 
+        selectedCrystal = v 
+    end 
+})
 
 PetsTab:AddToggle("AutoCry", {
     Title = "🥚 Auto Open Crystal",
@@ -206,8 +207,17 @@ PetsTab:AddToggle("AutoCry", {
 })
 
 PetsTab:AddSection("🐢 Pets")
+
 local selectedPet = "Swift Samurai"
-local petDrop = PetsTab:AddDropdown("PetDrop", { Title = "Select Pet", Values = {}, Default = "Swift Samurai", Callback = function(v) selectedPet = v end })
+local petDrop = PetsTab:AddDropdown("PetDrop", { 
+    Title = "Select Pet", 
+    Values = {}, 
+    Default = "Swift Samurai", 
+    Callback = function(v) 
+        selectedPet = v 
+    end 
+})
+
 petDrop:Add("None")
 petDrop:Add("Red Bunny")
 petDrop:Add("Red Kitty")
@@ -256,11 +266,13 @@ PetsTab:AddToggle("AutoPet", {
         _G.AutoHatchPet = bool
         if bool then
             task.spawn(function()
-                while _G.AutoHatchPet and selectedPet ~= "" do
-                    local petFolder = game:GetService("ReplicatedStorage"):FindFirstChild("cPetShopFolder")
-                    local petToOpen = petFolder and petFolder:FindFirstChild(selectedPet)
-                    if petToOpen then
-                        game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
+                while _G.AutoHatchPet do
+                    if selectedPet ~= "" and selectedPet ~= "None" then
+                        local petFolder = game:GetService("ReplicatedStorage"):FindFirstChild("cPetShopFolder")
+                        local petToOpen = petFolder and petFolder:FindFirstChild(selectedPet)
+                        if petToOpen then
+                            game:GetService("ReplicatedStorage").cPetShopRemote:InvokeServer(petToOpen)
+                        end
                     end
                     task.wait(0.1)
                 end
@@ -270,26 +282,16 @@ PetsTab:AddToggle("AutoPet", {
 })
 
 PetsTab:AddSection("✨ Auras")
+
 local selectedAura = "Ultimate"
-local auraDrop = PetsTab:AddDropdown("AuraDrop", { Title = "Select Aura", Values = {}, Default = "Ultimate", Callback = function(v) selectedAura = v end })
-auraDrop:Add("None")
-auraDrop:Add("Blue City")
-auraDrop:Add("Yellow Lightning")
-auraDrop:Add("Green Energy")
-auraDrop:Add("Red Strike")
-auraDrop:Add("Purple Haze")
-auraDrop:Add("Orbit")
-auraDrop:Add("Magma")
-auraDrop:Add("Ice")
-auraDrop:Add("Electric")
-auraDrop:Add("Dark Matter")
-auraDrop:Add("Galaxy")
-auraDrop:Add("Soul")
-auraDrop:Add("Hyperspeed")
-auraDrop:Add("Rainbow")
-auraDrop:Add("Holy")
-auraDrop:Add("Chaos")
-auraDrop:Add("Ultimate")
+local auraDrop = PetsTab:AddDropdown("AuraDrop", { 
+    Title = "Select Aura", 
+    Values = {"None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", "Purple Haze", "Orbit", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Hyperspeed", "Rainbow", "Holy", "Chaos", "Ultimate"}, 
+    Default = "Ultimate", 
+    Callback = function(v) 
+        selectedAura = v 
+    end 
+})
 
 PetsTab:AddToggle("AutoAura", {
     Title = "🔥 Auto Open Aura",
@@ -299,9 +301,11 @@ PetsTab:AddToggle("AutoAura", {
         if bool then
             task.spawn(function()
                 while _G.AutoHatchAura do
-                    local aura = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedAura)
-                    if aura then 
-                        game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", aura.Name) 
+                    if selectedAura ~= "" and selectedAura ~= "None" then
+                        local aura = game:GetService("ReplicatedStorage").openCrystalsFolder:FindFirstChild(selectedAura)
+                        if aura then 
+                            game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", aura.Name) 
+                        end
                     end
                     task.wait(0.1)
                 end
