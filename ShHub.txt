@@ -122,28 +122,6 @@ task.spawn(function()
     end
 end)
 
-MainFarm:AddToggle("AutoAllOrbs", {
-    Title = "⚡ Auto Farm All Orbs [MAX]",
-    Default = false,
-    Callback = function(bool)
-        _G.AutoAllOrbs = bool
-        if bool then
-            task.spawn(function()
-                local targetOrbs = {"Yellow Orb", "Red Orb", "Blue Orb", "Orange Orb", "Ethereal Orb", "Gem"}
-                while _G.AutoAllOrbs do
-                    for _, v in pairs(game.Workspace:GetChildren()) do
-                        if table.find(targetOrbs, v.Name) and v:FindFirstChild("TouchInterest") then
-                            firetouchinterest(player.Character.HumanoidRootPart, v, 0)
-                            firetouchinterest(player.Character.HumanoidRootPart, v, 1)
-                        end
-                    end
-                    task.wait(0.1)
-                end
-            end)
-        end
-    end
-})
-
 local RebirthTab = Window:AddTab({ Title = "Rebirths", Icon = "refresh-cw" })
 local targetRebirthValue = 0
 
@@ -198,11 +176,11 @@ local PetsTab = Window:AddTab({ Title = "Pets & Aura", Icon = "shopping-cart" })
 
 PetsTab:AddSection("💎 Crystals")
 
-local selectedCrystal = "Blue Crystal"
+local selectedCrystal = ""
 PetsTab:AddDropdown("CryDrop", { 
     Title = "Select Crystal", 
     Values = {"Blue Crystal", "Red Crystal", "Lightning Crystal", "Inferno Crystal", "Lava Crystal", "Snow Crystal", "Electro Crystal", "Desert Crystal"}, 
-    Default = "Blue Crystal", 
+    Default = "", 
     Callback = function(v) 
         selectedCrystal = v 
     end 
@@ -226,11 +204,11 @@ PetsTab:AddToggle("AutoCry", {
 
 PetsTab:AddSection("🐢 Pets")
 
-local selectedPet = "None"
+local selectedPet = ""
 PetsTab:AddDropdown("PetDrop", { 
     Title = "Select Pet", 
     Values = {"None", "Red Bunny", "Red Kitty", "Green Vampy", "Blue Bunny", "Dark Golem", "Silver Dog", "Pink Butterfly", "Purple Pegasus", "Yellow Squeak", "Yellow Butterfly", "Green Golem", "Golden Angel", "Orange Pegasus", "Golden Pheonix", "Orange Falcon", "Green Firecaster", "Blue Firecaster", "White Pheonix", "Red Pheonix", "Red Firecaster", "Flaming Hedgehog", "Quantum Dragon", "Tundra Dragon", "Magic Butterfly", "Soul Fusion Dog", "Hypersonic Pegasus", "Dark Soul Birdie", "Eternal Nebula Dragon", "Shadows Edge Kitty", "Ultimate Overdrive Bunny", "Blue Pheonix", "Magical Pegasus", "Voltaic Falcon", "Electro Golem", "Maestro Dog", "Divine Pegasus", "Golden Viking", "Speedy Sensei", "Swift Samurai"}, 
-    Default = "Swift Samurai", 
+    Default = "", 
     Callback = function(v) 
         selectedPet = v 
     end 
@@ -263,7 +241,7 @@ PetsTab:AddSection("✨ Aura")
 local selectedAura = "None"
 PetsTab:AddDropdown("AuraDrop", { 
     Title = "Select Aura", 
-    Values = {"None", "Hyperblast", "1st Trail", "Dragon Fire", "Red Strike", "Purple Haze", "Yellow Trail", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Rainbow Steps", "Rainbow Speed", "Holy", "Chaos", "Ultimate"}, 
+    Values = {"None", "Hyperblast", "1st Trail", "Dragon Fire", "Yellow Trail", "Rainbow Steps", "Rainbow Speed"}, 
     Default = "None", 
     Callback = function(v) 
         selectedAura = v 
@@ -427,6 +405,56 @@ Misc:AddToggle("AntiAfk", {
             local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
             if oldGui then oldGui:Destroy() end
         end
+    end
+})
+
+local spyTargetDropdown = Misc:AddDropdown("SpyTargetDropdown", {
+    Title = "👁️ Select View Target",
+    Values = {},
+    Default = nil,
+    Callback = function(Value)
+        _G.TargetPlayerName = Value
+    end
+})
+
+local function UpdateDropdown()
+    local players = {}
+    for _, v in ipairs(game.Players:GetPlayers()) do
+        if v ~= player then
+            table.insert(players, v.Name)
+        end
+    end
+    spyTargetDropdown:SetValues(players)
+end
+
+UpdateDropdown()
+
+game.Players.PlayerAdded:Connect(UpdateDropdown)
+game.Players.PlayerRemoving:Connect(UpdateDropdown)
+
+Misc:AddToggle("ViewPlayerToggle", {
+    Title = "👀 View Player",
+    Default = false,
+    Callback = function(bool)
+        _G.Spying = bool
+        if not bool then
+            workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
+            return
+        end
+        task.spawn(function()
+            while _G.Spying do
+                if _G.TargetPlayerName then
+                    local target = game.Players:FindFirstChild(_G.TargetPlayerName)
+                    if target and target.Character then
+                        local humanoid = target.Character:FindFirstChild("Humanoid")
+                        if humanoid then
+                            workspace.CurrentCamera.CameraSubject = humanoid
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
     end
 })
 
