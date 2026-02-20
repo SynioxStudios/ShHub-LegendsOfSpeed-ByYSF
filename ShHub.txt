@@ -319,7 +319,7 @@ local PlayerDrop = LookDura:AddDropdown("SelectPlayer", {
     Default = nil,
     Callback = function(Value)
         if Value then
-            SelectPlayerName = Value:match("| (.+)")
+            SelectPlayerName = Value:match("| (.+)") or Value
         end
     end
 })
@@ -361,7 +361,6 @@ local UpdateSteps = LookDura:AddLabel("⚡ Steps: -")
 local UpdateGems = LookDura:AddLabel("💎 Gems: -")
 local UpdateRebirths = LookDura:AddLabel("🔄 Rebirths: -")
 local UpdateLevel = LookDura:AddLabel("📈 Level: -")
-local UpdateSpeed = LookDura:AddLabel("🏎️ Speed: -")
 
 task.spawn(function()
     while task.wait(0.5) do
@@ -369,22 +368,22 @@ task.spawn(function()
             local target = game.Players:FindFirstChild(SelectPlayerName)
             if target then
                 local lstats = target:FindFirstChild("leaderstats")
+                
                 if lstats then
                     if lstats:FindFirstChild("Steps") then
-                        UpdateSteps.SetText("⚡ Steps: " .. FormatDisplay(lstats.Steps.Value))
+                        UpdateSteps:SetTitle("⚡ Steps: " .. FormatDisplay(lstats.Steps.Value))
                     end
                     if lstats:FindFirstChild("Rebirths") then
-                        UpdateRebirths.SetText("🔄 Rebirths: " .. FormatDisplay(lstats.Rebirths.Value))
+                        UpdateRebirths:SetTitle("🔄 Rebirths: " .. FormatDisplay(lstats.Rebirths.Value))
                     end
                 end
+                
                 if target:FindFirstChild("Gems") then
-                    UpdateGems.SetText("💎 Gems: " .. FormatDisplay(target.Gems.Value))
+                    UpdateGems:SetTitle("💎 Gems: " .. FormatDisplay(target.Gems.Value))
                 end
+                
                 if target:FindFirstChild("level") then
-                    UpdateLevel.SetText("📈 Level: " .. FormatDisplay(target.level.Value))
-                end
-                if target.Character and target.Character:FindFirstChild("Humanoid") then
-                    UpdateSpeed.SetText("🏎️ Speed: " .. math.floor(target.Character.Humanoid.WalkSpeed))
+                    UpdateLevel:SetTitle("📈 Level: " .. FormatDisplay(target.level.Value))
                 end
             end
         end
