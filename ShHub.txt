@@ -13,7 +13,7 @@ local Window = SynioxLib:CreateWindow({
     TabWidth = 160,
     Size = UDim2.fromOffset(470, 350),
     Acrylic = true,
-    Theme = "SpeedHubX"
+    Theme = "SynioxHub"
 })
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
