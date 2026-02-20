@@ -491,8 +491,59 @@ Misc:AddToggle("AntiAfk", {
     end
 })
 
+local TeleportTarget = ""
+local CurrentTPList = {}
+
+local PlayerTPDropdown = Misc:AddDropdown("PlayerTPDropdown", {
+    Title = "🎯 Select Player",
+    Values = {},
+    Default = nil,
+    Callback = function(Value)
+        TeleportTarget = Value
+    end
+})
+
+local function AddPlayerToList(plr)
+    if plr ~= player then
+        table.insert(CurrentTPList, plr.DisplayName)
+        PlayerTPDropdown:SetValues(CurrentTPList)
+    end
+end
+
+for _, v in ipairs(game.Players:GetPlayers()) do
+    AddPlayerToList(v)
+end
+
+game.Players.PlayerAdded:Connect(function(newPlr)
+    AddPlayerToList(newPlr)
+end)
+
+game.Players.PlayerRemoving:Connect(function(oldPlr)
+    for i, name in ipairs(CurrentTPList) do
+        if name == oldPlr.DisplayName then
+            table.remove(CurrentTPList, i)
+            break
+        end
+    end
+    PlayerTPDropdown:SetValues(CurrentTPList)
+end)
+
+Misc:AddButton({
+    Title = "🚀 Teleport to Player",
+    Callback = function()
+        if TeleportTarget ~= "" then
+            for _, v in ipairs(game.Players:GetPlayers()) do
+                if v.DisplayName == TeleportTarget and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame
+                    break
+                end
+            end
+        end
+    end
+})
+
 local spyTargetDropdown = Misc:AddDropdown("SpyTargetDropdown", {
-    Title = "👁️ Select View Target",
+    Title = "👁️ Select View",
     Values = {},
     Default = nil,
     Callback = function(Value)
