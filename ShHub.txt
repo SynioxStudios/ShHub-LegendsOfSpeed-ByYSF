@@ -241,7 +241,7 @@ PetsTab:AddSection("✨ Auras")
 local selectedAura = "None"
 PetsTab:AddDropdown("AuraDrop", { 
     Title = "Select Aura", 
-    Values = {"None", "Blue City", "Yellow Lightning", "Green Energy", "Red Strike", "Purple Haze", "Orbit", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Hyperspeed", "Rainbow", "Holy", "Chaos", "Ultimate"}, 
+    Values = {"None", "Hyperblast", "1st Trail", "Dragon Fire", "Red Strike", "Purple Haze", "Yellow Trail", "Magma", "Ice", "Electric", "Dark Matter", "Galaxy", "Soul", "Rainbow Steps", "Rainbow Speed", "Holy", "Chaos", "Ultimate"}, 
     Default = "Ultimate", 
     Callback = function(v) 
         selectedAura = v 
